@@ -3,473 +3,925 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Portal de Visitas · Matthew</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<title>Registro de Visitas · Matthew</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-:root {
-  --bg: #F6F4EF; --surface: #FFFFFF; --surface2: #F0EDE6;
-  --ink: #1C1916; --ink-soft: #4A443C; --ink-muted: #8C8078;
-  --border: rgba(28,25,22,0.1); --border-med: rgba(28,25,22,0.18);
-  --green: #3B6D11; --green-bg: #EAF3DE; --green-text: #27500A;
-  --red: #A32D2D; --red-bg: #FCEBEB; --red-text: #791F1F;
-  --amber: #BA7517; --amber-bg: #FAEEDA;
-  --blue: #185FA5; --blue-bg: #E6F1FB; --blue-text: #0C447C;
-  --r: 12px; --r-sm: 8px;
-}
-body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--ink); min-height:100vh; font-size:14px; line-height:1.6; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-.site-header { background:var(--ink); color:#F6F4EF; }
-.header-top { max-width:900px; margin:0 auto; padding:1.5rem 1.5rem 1.25rem; display:flex; align-items:center; gap:1.5rem; }
-.photo-circle {
-  width:84px; height:84px; border-radius:50%;
-  border:3px solid rgba(246,244,239,0.3);
-  overflow:hidden; flex-shrink:0;
-}
-.photo-circle img { width:100%; height:100%; object-fit:cover; display:block; }
-.header-info { flex:1; }
-.header-name { font-family:'Playfair Display',serif; font-size:1.8rem; font-weight:400; color:#F6F4EF; letter-spacing:-0.01em; line-height:1.15; }
-.header-sub { font-size:12px; color:rgba(246,244,239,0.45); margin-top:4px; }
-.header-year { font-size:11px; color:rgba(246,244,239,0.3); font-weight:500; letter-spacing:.08em; text-transform:uppercase; margin-top:8px; }
+  :root {
+    --cream: #FAF8F3;
+    --warm-white: #FFFFFF;
+    --ink: #1A1714;
+    --ink-soft: #4A4540;
+    --ink-muted: #857F79;
+    --border: rgba(26,23,20,0.1);
+    --border-strong: rgba(26,23,20,0.2);
+    --accent: #3B6D11;
+    --accent-bg: #EAF3DE;
+    --accent-text: #27500A;
+    --warn: #BA7517;
+    --warn-bg: #FAEEDA;
+    --danger: #A32D2D;
+    --danger-bg: #FCEBEB;
+    --info: #185FA5;
+    --info-bg: #E6F1FB;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
 
-nav { border-top:0.5px solid rgba(246,244,239,0.12); }
-.nav-inner { max-width:900px; margin:0 auto; padding:0 1.5rem; display:flex; overflow-x:auto; }
-.nav-tab { padding:.7rem 1rem; font-size:12.5px; font-weight:500; color:rgba(246,244,239,0.45); border:none; background:none; cursor:pointer; border-bottom:2px solid transparent; white-space:nowrap; font-family:'Inter',sans-serif; transition:color .15s,border-color .15s; }
-.nav-tab.active { color:#F6F4EF; border-bottom-color:#F6F4EF; }
-.nav-tab:hover:not(.active) { color:rgba(246,244,239,0.75); }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --cream: #1C1A17;
+      --warm-white: #252220;
+      --ink: #F0EDE8;
+      --ink-soft: #C8C3BC;
+      --ink-muted: #857F79;
+      --border: rgba(240,237,232,0.1);
+      --border-strong: rgba(240,237,232,0.2);
+      --accent: #97C459;
+      --accent-bg: #173404;
+      --accent-text: #C0DD97;
+      --warn: #EF9F27;
+      --warn-bg: #412402;
+      --danger: #F09595;
+      --danger-bg: #501313;
+      --info: #85B7EB;
+      --info-bg: #042C53;
+    }
+  }
 
-main { max-width:900px; margin:0 auto; padding:1.75rem 1.5rem; display:flex; flex-direction:column; gap:1.1rem; }
-.section { display:none; flex-direction:column; gap:1.1rem; }
-.section.active { display:flex; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.6;
+  }
 
-.card { background:var(--surface); border:0.5px solid var(--border); border-radius:var(--r); overflow:hidden; }
-.card-head { padding:.875rem 1.25rem; border-bottom:0.5px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
-.card-title { font-family:'Playfair Display',serif; font-size:.95rem; font-weight:400; color:var(--ink); }
-.card-body { padding:1.1rem 1.25rem; }
+  header {
+    background: var(--warm-white);
+    border-bottom: 0.5px solid var(--border);
+    padding: 1.5rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
 
-.stats-row { display:grid; grid-template-columns:repeat(3,1fr); gap:.75rem; }
-.stat-box { background:var(--surface2); border-radius:var(--r-sm); padding:.875rem; text-align:center; }
-.stat-num { font-family:'Playfair Display',serif; font-size:2rem; font-weight:400; line-height:1; }
-.stat-label { font-size:10.5px; color:var(--ink-muted); font-weight:600; text-transform:uppercase; letter-spacing:.05em; margin-top:5px; }
+  .header-left h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.4rem;
+    font-weight: 400;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
 
-.pg { display:grid; grid-template-columns:auto 1fr; gap:.4rem .875rem; font-size:13.5px; align-items:start; }
-.pg-l { font-weight:500; color:var(--ink-soft); white-space:nowrap; }
-.pg-v { color:var(--ink); }
-.countdown-pill { display:inline-flex; align-items:center; gap:5px; font-size:11.5px; font-weight:600; padding:4px 12px; background:var(--green-bg); color:var(--green-text); border-radius:20px; margin-top:.75rem; }
+  .header-left p {
+    font-size: 12px;
+    color: var(--ink-muted);
+    margin-top: 2px;
+  }
 
-/* TABLA */
-.visit-table { width:100%; border-collapse:collapse; font-size:13px; }
-.visit-table th { text-align:left; font-size:10.5px; font-weight:600; color:var(--ink-muted); text-transform:uppercase; letter-spacing:.05em; padding:.55rem .875rem; background:var(--surface2); border-bottom:0.5px solid var(--border); white-space:nowrap; }
-.visit-table td { padding:.7rem .875rem; border-bottom:0.5px solid var(--border); vertical-align:middle; color:var(--ink-soft); }
-.visit-table tr:last-child td { border-bottom:none; }
-.visit-table tbody tr:hover td { background:var(--bg); }
-.visit-table td:first-child { font-weight:500; color:var(--ink); white-space:nowrap; }
-.visit-table td.obs { font-size:12px; color:var(--ink-muted); max-width:180px; }
-.visit-table td.tiempo { font-size:12px; color:var(--ink-soft); white-space:nowrap; }
+  .header-right {
+    display: flex;
+    gap: 8px;
+  }
 
-.ep { display:inline-flex; align-items:center; gap:4px; font-size:11.5px; font-weight:500; padding:3px 10px; border-radius:20px; white-space:nowrap; }
-.ep-a { background:var(--green-bg); color:var(--green-text); }
-.ep-n { background:var(--red-bg); color:var(--red-text); }
-.ep-r { background:var(--amber-bg); color:var(--amber); }
-.ep-p { background:var(--blue-bg); color:var(--blue-text); }
+  nav {
+    background: var(--warm-white);
+    border-bottom: 0.5px solid var(--border);
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    padding: 0 2rem;
+  }
 
-/* NORMAS */
-.norma-block { padding:.875rem 1rem; border-radius:var(--r-sm); margin-bottom:.5rem; font-size:13.5px; color:var(--ink-soft); display:flex; align-items:flex-start; gap:.5rem; line-height:1.6; }
-.nb-blue { background:var(--blue-bg); border-left:3px solid var(--blue); }
-.nb-red { background:var(--red-bg); border-left:3px solid var(--red); }
-.nb-amber { background:var(--amber-bg); border-left:3px solid var(--amber); }
-.nb-green { background:var(--green-bg); border-left:3px solid var(--green); }
-.nb-icon { font-size:15px; flex-shrink:0; margin-top:1px; }
+  .nav-tab {
+    padding: 0.75rem 1.25rem;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-muted);
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: color 0.15s, border-color 0.15s;
+  }
 
-/* AVISO */
-.aviso-item { display:flex; align-items:flex-start; gap:.75rem; padding:.75rem .875rem; border-radius:var(--r-sm); margin-bottom:.5rem; }
-.av-info { background:var(--blue-bg); }
-.av-warn { background:var(--amber-bg); }
-.av-danger { background:var(--red-bg); }
-.av-success { background:var(--green-bg); }
-.av-icon { font-size:16px; flex-shrink:0; margin-top:1px; }
-.av-body { flex:1; }
-.av-titulo { font-weight:500; color:var(--ink); font-size:13.5px; }
-.av-desc { font-size:12.5px; color:var(--ink-muted); margin-top:2px; line-height:1.5; }
+  .nav-tab.active {
+    color: var(--ink);
+    border-bottom-color: var(--ink);
+  }
 
-.badge-count { font-size:11px; font-weight:600; padding:2px 9px; border-radius:20px; background:var(--amber-bg); color:var(--amber); }
+  .nav-tab:hover:not(.active) {
+    color: var(--ink-soft);
+  }
 
-.btn { display:inline-flex; align-items:center; gap:5px; padding:7px 15px; border-radius:var(--r-sm); font-family:'Inter',sans-serif; font-size:12.5px; font-weight:500; cursor:pointer; border:none; transition:opacity .15s,transform .1s; }
-.btn:active { transform:scale(.98); }
-.btn-ghost { background:none; border:0.5px solid var(--border-med); color:var(--ink); }
-.btn-ghost:hover { background:var(--bg); }
-.btn-sm { padding:5px 11px; font-size:11.5px; }
+  main {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
 
-.empty { text-align:center; padding:2rem 1rem; color:var(--ink-muted); font-size:13px; }
+  .section { display: none; }
+  .section.active { display: flex; flex-direction: column; gap: 1.25rem; }
 
-.edit-hint { font-size:11.5px; color:var(--blue-text); background:var(--blue-bg); padding:.5rem .875rem; border-radius:var(--r-sm); display:inline-flex; align-items:center; gap:5px; }
+  .card {
+    background: var(--warm-white);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+  }
 
-.site-footer { text-align:center; font-size:11px; color:var(--ink-muted); padding:1.5rem; border-top:0.5px solid var(--border); margin-top:1rem; }
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
 
-.duracion-chip { font-size:11px; background:var(--surface2); padding:2px 8px; border-radius:20px; color:var(--ink-muted); font-weight:500; white-space:nowrap; }
+  .card-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--ink);
+  }
 
-@media(max-width:580px){
-  .header-name{font-size:1.45rem;} .photo-circle{width:68px;height:68px;}
-  .stats-row{grid-template-columns:1fr 1fr;}
-  .pg{grid-template-columns:1fr;}
-  .visit-table{font-size:11.5px;} .visit-table th,.visit-table td{padding:.45rem .625rem;}
-  .visit-table td.obs,.visit-table td.tiempo{display:none;}
-}
+  .badge {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+
+  .badge-success { background: var(--accent-bg); color: var(--accent-text); }
+  .badge-warn { background: var(--warn-bg); color: var(--warn); }
+  .badge-danger { background: var(--danger-bg); color: var(--danger); }
+  .badge-info { background: var(--info-bg); color: var(--info); }
+
+  .proxima-fecha {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+  }
+
+  .fecha-big {
+    font-family: 'DM Serif Display', serif;
+    font-size: 3rem;
+    line-height: 1;
+    color: var(--ink);
+    font-weight: 400;
+  }
+
+  .fecha-info { display: flex; flex-direction: column; gap: 4px; }
+  .fecha-mes { font-size: 1rem; font-weight: 500; color: var(--ink); }
+  .fecha-sub { font-size: 12px; color: var(--ink-muted); }
+
+  .countdown-chip {
+    margin-top: 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 12px;
+    background: var(--accent-bg);
+    color: var(--accent-text);
+    border-radius: 20px;
+  }
+
+  .historial-list { display: flex; flex-direction: column; gap: 0; }
+
+  .visita-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.875rem 0;
+    border-bottom: 0.5px solid var(--border);
+    flex-wrap: wrap;
+  }
+
+  .visita-row:last-child { border-bottom: none; }
+
+  .visita-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .dot-success { background: var(--accent); }
+  .dot-warn { background: var(--warn); }
+  .dot-danger { background: var(--danger); }
+
+  .visita-fecha {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+    min-width: 120px;
+  }
+
+  .visita-nota {
+    font-size: 13px;
+    color: var(--ink-soft);
+    flex: 1;
+  }
+
+  .visita-duracion {
+    font-size: 12px;
+    color: var(--ink-muted);
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 2.5rem 1rem;
+    color: var(--ink-muted);
+  }
+
+  .empty-state p { font-size: 13px; margin-top: 6px; }
+
+  .avisos-list { display: flex; flex-direction: column; gap: 0.625rem; }
+
+  .aviso {
+    display: flex;
+    gap: 0.875rem;
+    padding: 0.875rem 1rem;
+    border-radius: var(--radius-sm);
+    border: 0.5px solid var(--border);
+    align-items: flex-start;
+  }
+
+  .aviso-icon { font-size: 16px; margin-top: 2px; flex-shrink: 0; }
+  .aviso-body { flex: 1; }
+  .aviso-titulo { font-size: 13px; font-weight: 500; color: var(--ink); }
+  .aviso-desc { font-size: 12px; color: var(--ink-muted); margin-top: 2px; }
+  .aviso-btn-del { background: none; border: none; cursor: pointer; font-size: 14px; color: var(--ink-muted); padding: 2px 4px; border-radius: 4px; }
+  .aviso-btn-del:hover { color: var(--danger); }
+
+  .aviso.tipo-info { background: var(--info-bg); border-color: transparent; }
+  .aviso.tipo-warn { background: var(--warn-bg); border-color: transparent; }
+  .aviso.tipo-danger { background: var(--danger-bg); border-color: transparent; }
+  .aviso.tipo-success { background: var(--accent-bg); border-color: transparent; }
+
+  .form-row { display: flex; flex-direction: column; gap: 4px; margin-bottom: 0.875rem; }
+  .form-row label { font-size: 12px; font-weight: 500; color: var(--ink-soft); }
+
+  input[type="text"], input[type="date"], input[type="time"], select, textarea {
+    width: 100%;
+    padding: 8px 12px;
+    border: 0.5px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--ink);
+  }
+
+  textarea { resize: vertical; min-height: 72px; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s;
+    border: none;
+  }
+
+  .btn:active { transform: scale(0.98); }
+
+  .btn-primary {
+    background: var(--ink);
+    color: var(--cream);
+  }
+
+  .btn-primary:hover { opacity: 0.85; }
+
+  .btn-ghost {
+    background: none;
+    border: 0.5px solid var(--border-strong);
+    color: var(--ink);
+  }
+
+  .btn-ghost:hover { background: var(--cream); }
+
+  .btn-danger {
+    background: var(--danger-bg);
+    color: var(--danger);
+  }
+
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.35);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--warm-white);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    width: 100%;
+    max-width: 440px;
+    border: 0.5px solid var(--border);
+  }
+
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+  }
+
+  .modal-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.1rem;
+    font-weight: 400;
+  }
+
+  .modal-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    color: var(--ink-muted);
+    line-height: 1;
+    padding: 4px;
+  }
+
+  .modal-footer { display: flex; gap: 8px; justify-content: flex-end; margin-top: 1.25rem; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.625rem; }
+
+  .stat-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; }
+
+  .stat-card {
+    background: var(--cream);
+    border-radius: var(--radius-sm);
+    padding: 0.875rem 1rem;
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2rem;
+    font-weight: 400;
+    color: var(--ink);
+    line-height: 1.1;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--ink-muted);
+    margin-top: 4px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .divider { height: 0.5px; background: var(--border); margin: 0.5rem 0; }
+
+  @media (max-width: 600px) {
+    header { padding: 1rem 1.25rem; }
+    nav { padding: 0 1.25rem; }
+    main { padding: 1.25rem 1rem; }
+    .stat-cards { grid-template-columns: 1fr 1fr; }
+    .grid-2 { grid-template-columns: 1fr; }
+    .fecha-big { font-size: 2.25rem; }
+  }
 </style>
 </head>
 <body>
 
-<header class="site-header">
-  <div class="header-top">
-    <div class="photo-circle">
-      <img src="img/matthew.jpg" alt="Matthew">
-    </div>
-    <div class="header-info">
-      <div class="header-name">Matthew</div>
-      <div class="header-sub">Registro oficial de visitas · Documento de seguimiento</div>
-      <div class="header-year">Portal privado · 2026</div>
-    </div>
+<header>
+  <div class="header-left">
+    <h1>✦ Visitas · Matthew</h1>
+    <p id="fecha-hoy"></p>
   </div>
-  <nav>
-    <div class="nav-inner">
-      <button class="nav-tab active" onclick="tab('inicio',this)">Inicio</button>
-      <button class="nav-tab" onclick="tab('historial',this)">Historial</button>
-      <button class="nav-tab" onclick="tab('proxima',this)">Próxima visita</button>
-      <button class="nav-tab" onclick="tab('normas',this)">Normas</button>
-      <button class="nav-tab" onclick="tab('avisos',this)">Avisos</button>
-    </div>
-  </nav>
+  <div class="header-right">
+    <button class="btn btn-primary" onclick="abrirModalVisita()">+ Registrar visita</button>
+  </div>
 </header>
+
+<nav>
+  <button class="nav-tab active" onclick="cambiarTab('inicio', this)">Inicio</button>
+  <button class="nav-tab" onclick="cambiarTab('historial', this)">Historial</button>
+  <button class="nav-tab" onclick="cambiarTab('avisos', this)">Avisos</button>
+  <button class="nav-tab" onclick="cambiarTab('proxima', this)">Próxima visita</button>
+</nav>
 
 <main>
 
-<!-- ═══════════════════════════════════════════════════════════════
-     DATOS — EDITA AQUÍ MANUALMENTE
-     ═══════════════════════════════════════════════════════════════ -->
-<script>
-
-/* ─── PRÓXIMA VISITA ────────────────────────────────────────────
-   Edita los campos debajo. Deja vacío ("") si no aplica.        */
-const PROXIMA = {
-  fecha:      "2026-06-13",           // año-mes-día (debe ser sábado)
-  h_inicio:   "00:00",               // hora inicio  (HH:MM)
-  h_fin:      "00:00",               // hora fin     (HH:MM)
-  lugar:      "Domicilio materno",
-  condicion:  "Aún no confirmado.",
-  notas:      "Visita supervisada por tratarse de un bebé"
-};
-
-/* ─── HISTORIAL DE VISITAS ──────────────────────────────────────
-   Agrega una línea por cada visita. El más reciente primero.
-   estado: "asistio" | "noasistio" | "reprogramada" | "pendiente"
-   entrada / salida: hora real (HH:MM). Deja "" si no aplica.   */
-const VISITAS = [
-  {
-    fecha:       "2026-06-06",
-    horario:     "00.",
-    estado:      "noasistio",
-    entrada:     "00:00",
-    salida:      "00:00",
-    observacion: "No se presentó"
-  },
-  {
-    fecha:       "2026-05-30",
-    horario:     "12:00 pm.",
-    estado:      "asistio",
-    entrada:     "12:00",
-    salida:      "12:40",
-    observacion: "Visita realizada en domicilio materno."
-  },
-  // ── Agrega más visitas aquí con el mismo formato ──
-  // {
-  //   fecha:       "2026-05-23",
-  //   horario:     "3:00 – 5:00 p.m.",
-  //   estado:      "reprogramada",
-  //   entrada:     "",
-  //   salida:      "",
-  //   observacion: ""
-  // },
-];
-
-/* ─── NORMAS ────────────────────────────────────────────────────
-   tipo: "blue" (general) | "red" (prohibición) |
-         "amber" (advertencia) | "green" (acuerdo)               */
-const NORMAS = [
-  { tipo:"blue",  texto:"Las visitas se realizarán únicamente los sábados, en el horario previamente acordado: 10:00 a.m. – 1:00 p.m. o 3:00 p.m. – 5:00 p.m. No se permitirán visitas fuera de estos horarios sin acuerdo escrito previo." },
-  { tipo:"blue",  texto:"Toda comunicación referida a Matthew deberá realizarse exclusivamente por medios formales y escritos (correo electrónico u oficio). No se utilizará WhatsApp como medio principal de coordinación." },
-  { tipo:"red",   texto:"Queda estrictamente PROHIBIDO tomar fotografías, realizar grabaciones de audio o video dentro o fuera del domicilio materno. Esta prohibición aplica especialmente a imágenes del interior del hogar." },
-  { tipo:"red",   texto:"Queda PROHIBIDO grabar o fotografiar a la madre, familiares presentes o cualquier persona del entorno de Matthew sin su consentimiento expreso y por escrito." },
-  { tipo:"red",   texto:"No se permitirá el ingreso al domicilio materno de personas no autorizadas durante la visita, bajo ninguna circunstancia." },
-  { tipo:"amber", texto:"El visitante deberá llegar puntualmente. Los retrasos superiores a 20 minutos sin aviso previo podrán ser considerados como inasistencia en el expediente." },
-  { tipo:"green", texto:"El visitante deberá llegar con las manos limpias y sin perfumes, colonias o aromas fuertes, en consideración a la salud y bienestar del bebé." },
-  { tipo:"amber", texto:"No se permitirá la visita si el visitante presenta síntomas de gripe, fiebre, tos u otras enfermedades contagiosas. El bienestar de Matthew es prioridad." },
-  { tipo:"green", texto:"Se deberán respetar los horarios de sueño y alimentación de Matthew. La visita podrá interrumpirse si el bienestar del bebé así lo requiere, sin que esto constituya incumplimiento." },
-  { tipo:"red",   texto:"Cualquier incumplimiento de estas normas quedará registrado y podrá ser presentado como evidencia dentro del proceso legal en curso." },
-];
-
-/* ─── AVISOS ────────────────────────────────────────────────────
-   tipo: "info" | "warn" | "danger" | "success"                  */
-const AVISOS = [
-  { tipo:"danger", titulo:"Prohibición de grabaciones y fotografías",    desc:"Está absolutamente prohibido grabar, fotografiar o filmar dentro o fuera del domicilio materno durante las visitas. Cualquier violación será reportada." },
-  { tipo:"warn",   titulo:"Proceso legal activo",                         desc:"Este portal forma parte del expediente y seguimiento legal. Todos los registros tienen valor documental." },
-  { tipo:"info",   titulo:"Condición especial del bebé",                  desc:"Matthew es un bebé recién nacido. Las visitas están sujetas a condiciones de supervisión y cuidado estrictas por su bienestar." },
-  { tipo:"warn",   titulo:"Sin comunicación por WhatsApp",                desc:"Toda coordinación debe realizarse por medios formales escritos. No se responderán mensajes de WhatsApp relacionados con las visitas." },
-];
-
-</script>
-<!-- ════════════════ FIN DE DATOS ════════════════════════════════ -->
-
-
-  <!-- INICIO -->
+  <!-- TAB: INICIO -->
   <div class="section active" id="sec-inicio">
+
     <div class="card">
-      <div class="card-head"><span class="card-title">Resumen de visitas</span></div>
-      <div class="card-body">
-        <div class="stats-row">
-          <div class="stat-box"><div class="stat-num" id="st-total">—</div><div class="stat-label">Total</div></div>
-          <div class="stat-box"><div class="stat-num" id="st-a" style="color:var(--green)">—</div><div class="stat-label">Asistió</div></div>
-          <div class="stat-box"><div class="stat-num" id="st-n" style="color:var(--red)">—</div><div class="stat-label">No asistió</div></div>
+      <div class="card-header">
+        <span class="card-title">Resumen general</span>
+      </div>
+      <div class="stat-cards">
+        <div class="stat-card">
+          <div class="stat-num" id="stat-total">0</div>
+          <div class="stat-label">Visitas totales</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="stat-asistio" style="color:var(--accent)">0</div>
+          <div class="stat-label">Asistió</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="stat-noasistio" style="color:var(--danger)">0</div>
+          <div class="stat-label">No asistió</div>
         </div>
       </div>
     </div>
 
     <div class="card">
-      <div class="card-head">
+      <div class="card-header">
         <span class="card-title">Próxima visita programada</span>
-        <button class="btn btn-ghost btn-sm" onclick="tab('proxima',document.querySelectorAll('.nav-tab')[2])">Ver detalle →</button>
+        <button class="btn btn-ghost" style="font-size:12px" onclick="cambiarTab('proxima', document.querySelectorAll('.nav-tab')[3])">Editar</button>
       </div>
-      <div class="card-body" id="inicio-proxima"></div>
+      <div id="proxima-inicio">
+        <p style="font-size:13px; color:var(--ink-muted);">No hay visita programada.</p>
+      </div>
     </div>
 
     <div class="card">
-      <div class="card-head"><span class="card-title">Última visita registrada</span></div>
-      <div class="card-body" id="inicio-ultima"></div>
+      <div class="card-header">
+        <span class="card-title">Última visita registrada</span>
+      </div>
+      <div id="ultima-visita">
+        <p style="font-size:13px; color:var(--ink-muted);">Sin registros aún.</p>
+      </div>
     </div>
 
-    <div class="card">
-      <div class="card-head">
+    <div class="card" id="card-avisos-inicio">
+      <div class="card-header">
         <span class="card-title">Avisos activos</span>
-        <span class="badge-count" id="badge-av">0</span>
+        <span class="badge badge-warn" id="badge-avisos">0</span>
       </div>
-      <div class="card-body" id="inicio-avisos"></div>
+      <div id="avisos-inicio-list">
+        <p style="font-size:13px; color:var(--ink-muted);">Sin avisos.</p>
+      </div>
     </div>
+
   </div>
 
-  <!-- HISTORIAL -->
+  <!-- TAB: HISTORIAL -->
   <div class="section" id="sec-historial">
     <div class="card">
-      <div class="card-head">
-        <span class="card-title">Historial completo de visitas</span>
-        <span class="edit-hint">sección VISITAS</span>
+      <div class="card-header">
+        <span class="card-title">Historial de visitas</span>
+        <button class="btn btn-primary" onclick="abrirModalVisita()">+ Agregar</button>
       </div>
-      <div style="overflow-x:auto;">
-        <table class="visit-table">
-          <thead>
-            <tr>
-              <th>Fecha</th>
-              <th>Horario programado</th>
-              <th>Estado</th>
-              <th>Entrada</th>
-              <th>Salida</th>
-              <th class="tiempo">Tiempo</th>
-              <th class="obs">Observación</th>
-            </tr>
-          </thead>
-          <tbody id="tbody"></tbody>
-        </table>
+      <div class="historial-list" id="lista-historial">
+        <div class="empty-state">
+          <div style="font-size:2rem;">📋</div>
+          <p>No hay visitas registradas aún.</p>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- PRÓXIMA VISITA -->
-  <div class="section" id="sec-proxima">
-    <div class="card">
-      <div class="card-head">
-        <span class="card-title">Próxima visita programada</span>
-        <span class="edit-hint">✏️ Edita en el código · sección PROXIMA</span>
-      </div>
-      <div class="card-body" id="proxima-detail"></div>
-    </div>
-  </div>
-
-  <!-- NORMAS -->
-  <div class="section" id="sec-normas">
-    <div class="card">
-      <div class="card-head">
-        <span class="card-title">Normas y condiciones de visita</span>
-        <span class="edit-hint"> sección NORMAS</span>
-      </div>
-      <div class="card-body" id="lista-normas"></div>
-    </div>
-  </div>
-
-  <!-- AVISOS -->
+  <!-- TAB: AVISOS -->
   <div class="section" id="sec-avisos">
     <div class="card">
-      <div class="card-head">
-        <span class="card-title">Avisos importantes</span>
-        <span class="edit-hint">sección AVISOS</span>
+      <div class="card-header">
+        <span class="card-title">Avisos importantes sobre Matthew</span>
+        <button class="btn btn-primary" onclick="abrirModalAviso()">+ Aviso</button>
       </div>
-      <div class="card-body" id="lista-avisos"></div>
+      <div class="avisos-list" id="lista-avisos">
+        <div class="empty-state">
+          <div style="font-size:2rem;">🔔</div>
+          <p>Sin avisos registrados.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: PRÓXIMA VISITA -->
+  <div class="section" id="sec-proxima">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Programar próxima visita</span>
+      </div>
+      <div class="form-row">
+        <label>Fecha de visita</label>
+        <input type="date" id="prox-fecha">
+      </div>
+      <div class="grid-2">
+        <div class="form-row">
+          <label>Hora</label>
+          <input type="time" id="prox-hora">
+        </div>
+        <div class="form-row">
+          <label>Lugar</label>
+          <input type="text" id="prox-lugar" placeholder="Ej: Casa materna">
+        </div>
+      </div>
+      <div class="form-row">
+        <label>Notas adicionales</label>
+        <textarea id="prox-notas" placeholder="Observaciones, condiciones, acuerdos..."></textarea>
+      </div>
+      <div style="display:flex; gap:8px; margin-top:0.5rem;">
+        <button class="btn btn-primary" onclick="guardarProxima()">Guardar visita programada</button>
+        <button class="btn btn-danger" onclick="borrarProxima()">Eliminar</button>
+      </div>
+      <div id="prox-confirmacion" style="margin-top:0.875rem; display:none;">
+        <span class="badge badge-success">✓ Guardado correctamente</span>
+      </div>
+    </div>
+
+    <div class="card" id="prox-preview" style="display:none;">
+      <div class="card-header">
+        <span class="card-title">Vista previa</span>
+      </div>
+      <div id="proxima-preview-content"></div>
     </div>
   </div>
 
 </main>
 
-<footer class="site-footer">Documento de registro oficial · Matthew · Portal privado 2026</footer>
+<!-- MODAL: Registrar visita -->
+<div class="modal-overlay" id="modal-visita">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Registrar visita</span>
+      <button class="modal-close" onclick="cerrarModal('modal-visita')">✕</button>
+    </div>
+    <div class="grid-2">
+      <div class="form-row">
+        <label>Fecha</label>
+        <input type="date" id="v-fecha">
+      </div>
+      <div class="form-row">
+        <label>Hora</label>
+        <input type="time" id="v-hora">
+      </div>
+    </div>
+    <div class="form-row">
+      <label>Estado de la visita</label>
+      <select id="v-estado">
+        <option value="asistio">🟢 Asistió</option>
+        <option value="reprogramada">🟡 Reprogramada</option>
+        <option value="noasistio">🔴 No asistió</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label>Duración</label>
+      <input type="text" id="v-duracion" placeholder="Ej: 2 horas">
+    </div>
+    <div class="form-row">
+      <label>Notas</label>
+      <textarea id="v-notas" placeholder="Observaciones de la visita..."></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-visita')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarVisita()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Agregar aviso -->
+<div class="modal-overlay" id="modal-aviso">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Nuevo aviso</span>
+      <button class="modal-close" onclick="cerrarModal('modal-aviso')">✕</button>
+    </div>
+    <div class="form-row">
+      <label>Título del aviso</label>
+      <input type="text" id="a-titulo" placeholder="Ej: Cita médica pendiente">
+    </div>
+    <div class="form-row">
+      <label>Descripción</label>
+      <textarea id="a-desc" placeholder="Detalle del aviso..."></textarea>
+    </div>
+    <div class="form-row">
+      <label>Tipo</label>
+      <select id="a-tipo">
+        <option value="info">ℹ️ Informativo</option>
+        <option value="warn">⚠️ Atención</option>
+        <option value="danger">🚨 Urgente</option>
+        <option value="success">✅ Positivo</option>
+      </select>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-aviso')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarAviso()">Guardar aviso</button>
+    </div>
+  </div>
+</div>
 
 <script>
-const MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
-const DIAS_S = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  const DIAS = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  const MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  const MESES_CORTO = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
 
-function fmtFecha(s) {
-  if (!s) return '';
-  const [y,m,d] = s.split('-');
-  const dt = new Date(parseInt(y), parseInt(m)-1, parseInt(d));
-  return `${DIAS_S[dt.getDay()]} ${parseInt(d)} de ${MESES[parseInt(m)-1]} de ${y}`;
-}
-
-function fmtFechaCorta(s) {
-  if (!s) return '';
-  return s.split('-').reverse().join('/');
-}
-
-function fmtH(h) {
-  if (!h) return '';
-  const [hh,mm] = h.split(':');
-  const hr = parseInt(hh);
-  return `${hr%12||12}:${mm} ${hr>=12?'p.m.':'a.m.'}`;
-}
-
-function diasRest(s) {
-  const hoy = new Date(); hoy.setHours(0,0,0,0);
-  const v = new Date(s+'T00:00:00');
-  const d = Math.round((v-hoy)/864e5);
-  if (d===0) return '¡Hoy!';
-  if (d===1) return 'Mañana';
-  if (d<0) return `Hace ${Math.abs(d)} día${Math.abs(d)!==1?'s':''}`;
-  return `Faltan ${d} días`;
-}
-
-function calcTiempo(entrada, salida) {
-  if (!entrada || !salida) return '';
-  const [h1,m1] = entrada.split(':').map(Number);
-  const [h2,m2] = salida.split(':').map(Number);
-  let mins = (h2*60+m2)-(h1*60+m1);
-  if (mins<=0) return '';
-  const h = Math.floor(mins/60);
-  const m = mins%60;
-  return h>0 ? (m>0?`${h}h ${m}min`:`${h}h`) : `${m}min`;
-}
-
-function estadoPill(e) {
-  const map = {
-    asistio:     ['ep-a','🟢 Asistió'],
-    noasistio:   ['ep-n','🔴 No asistió'],
-    reprogramada:['ep-r','🟡 Reprogramada'],
-    pendiente:   ['ep-p','🔵 Pendiente'],
-  };
-  const [cls,label] = map[e] || ['ep-p', e];
-  return `<span class="ep ${cls}">${label}</span>`;
-}
-
-function tab(id, btn) {
-  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active'));
-  document.getElementById('sec-'+id).classList.add('active');
-  btn.classList.add('active');
-}
-
-function render() {
-  // STATS
-  const total = VISITAS.length;
-  const asistio = VISITAS.filter(v=>v.estado==='asistio').length;
-  const noasistio = VISITAS.filter(v=>v.estado==='noasistio').length;
-  document.getElementById('st-total').textContent = total;
-  document.getElementById('st-a').textContent = asistio;
-  document.getElementById('st-n').textContent = noasistio;
-
-  // PRÓXIMA — inicio
-  const ip = document.getElementById('inicio-proxima');
-  if (PROXIMA && PROXIMA.fecha) {
-    const h = PROXIMA.h_inicio && PROXIMA.h_fin ? fmtH(PROXIMA.h_inicio)+' a '+fmtH(PROXIMA.h_fin) : '';
-    ip.innerHTML = `<div class="pg">
-      <span class="pg-l">Fecha:</span><span class="pg-v">${fmtFecha(PROXIMA.fecha)}</span>
-      ${h?`<span class="pg-l">Hora:</span><span class="pg-v">${h}</span>`:''}
-      ${PROXIMA.lugar?`<span class="pg-l">Lugar:</span><span class="pg-v">${PROXIMA.lugar}</span>`:''}
-      ${PROXIMA.condicion?`<span class="pg-l">Condición:</span><span class="pg-v">${PROXIMA.condicion}</span>`:''}
-      ${PROXIMA.notas?`<span class="pg-l">Notas:</span><span class="pg-v">${PROXIMA.notas}</span>`:''}
-    </div>
-    <div class="countdown-pill">📅 ${diasRest(PROXIMA.fecha)}</div>`;
-  } else {
-    ip.innerHTML = `<p style="font-size:13px;color:var(--ink-muted);">No hay visita programada.</p>`;
+  function hoyStr() {
+    const h = new Date();
+    return `${DIAS[h.getDay()]}, ${h.getDate()} de ${MESES[h.getMonth()]} de ${h.getFullYear()}`;
   }
 
-  // PRÓXIMA — tab
-  const pd = document.getElementById('proxima-detail');
-  pd.innerHTML = ip.innerHTML;
-
-  // ÚLTIMA VISITA
-  const iu = document.getElementById('inicio-ultima');
-  if (VISITAS.length>0) {
-    const v = VISITAS[0];
-    const dur = calcTiempo(v.entrada, v.salida);
-    iu.innerHTML = `<div style="display:flex;gap:.625rem;align-items:center;flex-wrap:wrap;">
-      ${estadoPill(v.estado)}
-      <span style="font-size:13.5px;font-weight:500;">${fmtFecha(v.fecha)}</span>
-      ${v.horario?`<span style="font-size:12px;color:var(--ink-muted);">${v.horario}</span>`:''}
-      ${dur?`<span class="duracion-chip">⏱ ${dur}</span>`:''}
-    </div>
-    ${v.observacion?`<p style="font-size:12.5px;color:var(--ink-muted);margin-top:6px;">${v.observacion}</p>`:''}`;
-  } else {
-    iu.innerHTML = `<p style="font-size:13px;color:var(--ink-muted);">Sin registros aún.</p>`;
+  function formatFecha(dateStr) {
+    if (!dateStr) return '';
+    const [y, m, d] = dateStr.split('-');
+    return `${parseInt(d)} de ${MESES[parseInt(m)-1]} de ${y}`;
   }
 
-  // HISTORIAL TABLA
-  const tbody = document.getElementById('tbody');
-  if (VISITAS.length===0) {
-    tbody.innerHTML = `<tr><td colspan="7" class="empty">Sin registros.</td></tr>`;
-  } else {
-    tbody.innerHTML = VISITAS.map(v => {
-      const dur = calcTiempo(v.entrada, v.salida);
-      const entradaLabel = v.entrada ? fmtH(v.entrada) : '—';
-      const salidaLabel  = v.salida  ? fmtH(v.salida)  : '—';
-      return `<tr>
-        <td>${fmtFechaCorta(v.fecha)}</td>
-        <td style="white-space:nowrap;">${v.horario||'—'}</td>
-        <td>${estadoPill(v.estado)}</td>
-        <td style="white-space:nowrap;">${entradaLabel}</td>
-        <td style="white-space:nowrap;">${salidaLabel}</td>
-        <td class="tiempo">${dur?`<span class="duracion-chip">⏱ ${dur}</span>`:''}</td>
-        <td class="obs">${v.observacion||'—'}</td>
-      </tr>`;
-    }).join('');
+  function diasRestantes(dateStr) {
+    const hoy = new Date(); hoy.setHours(0,0,0,0);
+    const visita = new Date(dateStr + 'T00:00:00');
+    const diff = Math.round((visita - hoy) / (1000*60*60*24));
+    if (diff === 0) return 'Hoy';
+    if (diff === 1) return 'Mañana';
+    if (diff < 0) return `Hace ${Math.abs(diff)} días`;
+    return `En ${diff} días`;
   }
 
-  // NORMAS
-  const ln = document.getElementById('lista-normas');
-  const normaIcons = { blue:'📋', red:'🚫', amber:'⚠️', green:'✅' };
-  ln.innerHTML = NORMAS.map(n =>
-    `<div class="norma-block nb-${n.tipo}"><span class="nb-icon">${normaIcons[n.tipo]}</span><span>${n.texto}</span></div>`
-  ).join('');
+  document.getElementById('fecha-hoy').textContent = hoyStr();
 
-  // AVISOS
-  document.getElementById('badge-av').textContent = AVISOS.length;
-  const avIcons = { info:'ℹ️', warn:'⚠️', danger:'🚨', success:'✅' };
-  const avHtml = items => items.length===0 ? '<p style="font-size:13px;color:var(--ink-muted);">Sin avisos.</p>' :
-    items.map(a=>`<div class="aviso-item av-${a.tipo}">
-      <span class="av-icon">${avIcons[a.tipo]}</span>
-      <div class="av-body">
-        <div class="av-titulo">${a.titulo}</div>
-        ${a.desc?`<div class="av-desc">${a.desc}</div>`:''}
+  function getData(key) {
+    try { return JSON.parse(localStorage.getItem(key)) || []; } catch { return []; }
+  }
+
+  function setData(key, val) {
+    localStorage.setItem(key, JSON.stringify(val));
+  }
+
+  function cambiarTab(id, btn) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+    document.getElementById('sec-' + id).classList.add('active');
+    btn.classList.add('active');
+    if (id === 'proxima') cargarFormProxima();
+    renderAll();
+  }
+
+  function abrirModalVisita() {
+    const hoy = new Date();
+    const ymd = hoy.toISOString().split('T')[0];
+    const hm = hoy.toTimeString().slice(0,5);
+    document.getElementById('v-fecha').value = ymd;
+    document.getElementById('v-hora').value = hm;
+    document.getElementById('v-estado').value = 'asistio';
+    document.getElementById('v-duracion').value = '';
+    document.getElementById('v-notas').value = '';
+    document.getElementById('modal-visita').classList.add('open');
+  }
+
+  function abrirModalAviso() {
+    document.getElementById('a-titulo').value = '';
+    document.getElementById('a-desc').value = '';
+    document.getElementById('a-tipo').value = 'info';
+    document.getElementById('modal-aviso').classList.add('open');
+  }
+
+  function cerrarModal(id) {
+    document.getElementById(id).classList.remove('open');
+  }
+
+  function guardarVisita() {
+    const fecha = document.getElementById('v-fecha').value;
+    const hora = document.getElementById('v-hora').value;
+    const estado = document.getElementById('v-estado').value;
+    const duracion = document.getElementById('v-duracion').value.trim();
+    const notas = document.getElementById('v-notas').value.trim();
+    if (!fecha) { alert('Por favor ingresa la fecha.'); return; }
+    const visitas = getData('visitas');
+    visitas.unshift({ id: Date.now(), fecha, hora, estado, duracion, notas, registradoEn: new Date().toISOString() });
+    setData('visitas', visitas);
+    cerrarModal('modal-visita');
+    renderAll();
+  }
+
+  function guardarAviso() {
+    const titulo = document.getElementById('a-titulo').value.trim();
+    const desc = document.getElementById('a-desc').value.trim();
+    const tipo = document.getElementById('a-tipo').value;
+    if (!titulo) { alert('Ingresa un título.'); return; }
+    const avisos = getData('avisos');
+    avisos.unshift({ id: Date.now(), titulo, desc, tipo });
+    setData('avisos', avisos);
+    cerrarModal('modal-aviso');
+    renderAll();
+  }
+
+  function eliminarVisita(id) {
+    if (!confirm('¿Eliminar esta visita?')) return;
+    const visitas = getData('visitas').filter(v => v.id !== id);
+    setData('visitas', visitas);
+    renderAll();
+  }
+
+  function eliminarAviso(id) {
+    const avisos = getData('avisos').filter(a => a.id !== id);
+    setData('avisos', avisos);
+    renderAll();
+  }
+
+  function guardarProxima() {
+    const fecha = document.getElementById('prox-fecha').value;
+    const hora = document.getElementById('prox-hora').value;
+    const lugar = document.getElementById('prox-lugar').value.trim();
+    const notas = document.getElementById('prox-notas').value.trim();
+    if (!fecha) { alert('Ingresa la fecha.'); return; }
+    setData('proxima', { fecha, hora, lugar, notas });
+    const conf = document.getElementById('prox-confirmacion');
+    conf.style.display = 'block';
+    setTimeout(() => conf.style.display = 'none', 2500);
+    renderAll();
+    cargarPreviewProxima();
+  }
+
+  function borrarProxima() {
+    if (!confirm('¿Eliminar la visita programada?')) return;
+    localStorage.removeItem('proxima');
+    document.getElementById('prox-fecha').value = '';
+    document.getElementById('prox-hora').value = '';
+    document.getElementById('prox-lugar').value = '';
+    document.getElementById('prox-notas').value = '';
+    document.getElementById('prox-preview').style.display = 'none';
+    renderAll();
+  }
+
+  function cargarFormProxima() {
+    const p = getData('proxima')[0] || JSON.parse(localStorage.getItem('proxima') || 'null');
+    if (!p) return;
+    document.getElementById('prox-fecha').value = p.fecha || '';
+    document.getElementById('prox-hora').value = p.hora || '';
+    document.getElementById('prox-lugar').value = p.lugar || '';
+    document.getElementById('prox-notas').value = p.notas || '';
+    cargarPreviewProxima();
+  }
+
+  function cargarPreviewProxima() {
+    const p = JSON.parse(localStorage.getItem('proxima') || 'null');
+    const preview = document.getElementById('prox-preview');
+    const content = document.getElementById('proxima-preview-content');
+    if (!p) { preview.style.display = 'none'; return; }
+    preview.style.display = 'block';
+    const [y, m, d] = p.fecha.split('-');
+    content.innerHTML = `
+      <div style="display:flex; align-items:center; gap:1rem; flex-wrap:wrap;">
+        <div class="fecha-big">${parseInt(d)}</div>
+        <div class="fecha-info">
+          <div class="fecha-mes">${MESES[parseInt(m)-1].charAt(0).toUpperCase()+MESES[parseInt(m)-1].slice(1)} ${y}${p.hora ? ' · '+p.hora : ''}</div>
+          ${p.lugar ? `<div class="fecha-sub">📍 ${p.lugar}</div>` : ''}
+        </div>
       </div>
-    </div>`).join('');
-  document.getElementById('lista-avisos').innerHTML = avHtml(AVISOS);
-  document.getElementById('inicio-avisos').innerHTML = avHtml(AVISOS.slice(0,3)) +
-    (AVISOS.length>3?`<p style="font-size:12px;color:var(--ink-muted);margin-top:4px;">+${AVISOS.length-3} más en Avisos</p>`:'');
-}
+      <div class="countdown-chip" style="margin-top:0.875rem;">📅 ${diasRestantes(p.fecha)}</div>
+      ${p.notas ? `<p style="font-size:13px; color:var(--ink-soft); margin-top:0.875rem;">${p.notas}</p>` : ''}
+    `;
+  }
 
-render();
+  function estadoLabel(e) {
+    if (e === 'asistio') return '<span class="badge badge-success">🟢 Asistió</span>';
+    if (e === 'reprogramada') return '<span class="badge badge-warn">🟡 Reprogramada</span>';
+    if (e === 'noasistio') return '<span class="badge badge-danger">🔴 No asistió</span>';
+    return '';
+  }
+
+  function estadoDot(e) {
+    if (e === 'asistio') return 'dot-success';
+    if (e === 'reprogramada') return 'dot-warn';
+    return 'dot-danger';
+  }
+
+  function renderAll() {
+    const visitas = getData('visitas');
+    const avisos = getData('avisos');
+    const proxima = JSON.parse(localStorage.getItem('proxima') || 'null');
+
+    // Stats
+    document.getElementById('stat-total').textContent = visitas.length;
+    document.getElementById('stat-asistio').textContent = visitas.filter(v => v.estado === 'asistio').length;
+    document.getElementById('stat-noasistio').textContent = visitas.filter(v => v.estado === 'noasistio').length;
+
+    // Próxima en inicio
+    const proxEl = document.getElementById('proxima-inicio');
+    if (proxima) {
+      const [y, m, d] = proxima.fecha.split('-');
+      proxEl.innerHTML = `
+        <div class="proxima-fecha">
+          <div class="fecha-big">${parseInt(d)}</div>
+          <div class="fecha-info">
+            <div class="fecha-mes">${MESES[parseInt(m)-1].charAt(0).toUpperCase()+MESES[parseInt(m)-1].slice(1)} ${y}${proxima.hora ? ' · '+proxima.hora : ''}</div>
+            ${proxima.lugar ? `<div class="fecha-sub">📍 ${proxima.lugar}</div>` : ''}
+          </div>
+        </div>
+        <div class="countdown-chip">📅 ${diasRestantes(proxima.fecha)}</div>
+        ${proxima.notas ? `<p style="font-size:12px; color:var(--ink-muted); margin-top:0.75rem;">${proxima.notas}</p>` : ''}
+      `;
+    } else {
+      proxEl.innerHTML = `<p style="font-size:13px; color:var(--ink-muted);">No hay visita programada. <a href="#" onclick="cambiarTab('proxima', document.querySelectorAll('.nav-tab')[3]); return false;" style="color:var(--info);">Programar →</a></p>`;
+    }
+
+    // Última visita
+    const ultimaEl = document.getElementById('ultima-visita');
+    if (visitas.length > 0) {
+      const v = visitas[0];
+      ultimaEl.innerHTML = `
+        <div style="display:flex; align-items:center; gap:0.75rem; flex-wrap:wrap;">
+          ${estadoLabel(v.estado)}
+          <span style="font-size:14px; font-weight:500;">${formatFecha(v.fecha)}${v.hora ? ' · '+v.hora : ''}</span>
+          ${v.duracion ? `<span style="font-size:12px; color:var(--ink-muted);">${v.duracion}</span>` : ''}
+        </div>
+        ${v.notas ? `<p style="font-size:12px; color:var(--ink-muted); margin-top:6px;">${v.notas}</p>` : ''}
+      `;
+    } else {
+      ultimaEl.innerHTML = `<p style="font-size:13px; color:var(--ink-muted);">Sin registros aún.</p>`;
+    }
+
+    // Historial
+    const listaEl = document.getElementById('lista-historial');
+    if (visitas.length === 0) {
+      listaEl.innerHTML = `<div class="empty-state"><div style="font-size:2rem;">📋</div><p>No hay visitas registradas aún.</p></div>`;
+    } else {
+      listaEl.innerHTML = visitas.map(v => `
+        <div class="visita-row">
+          <div class="visita-dot ${estadoDot(v.estado)}"></div>
+          <div class="visita-fecha">${formatFecha(v.fecha)}${v.hora ? '<br><span style="font-weight:400;color:var(--ink-muted);font-size:11px;">'+v.hora+'</span>' : ''}</div>
+          ${estadoLabel(v.estado)}
+          <div class="visita-nota">${v.notas || ''}</div>
+          ${v.duracion ? `<div class="visita-duracion">${v.duracion}</div>` : ''}
+          <button onclick="eliminarVisita(${v.id})" style="background:none;border:none;cursor:pointer;font-size:14px;color:var(--ink-muted);padding:4px;" title="Eliminar">✕</button>
+        </div>
+      `).join('');
+    }
+
+    // Avisos (tab)
+    const avisosEl = document.getElementById('lista-avisos');
+    if (avisos.length === 0) {
+      avisosEl.innerHTML = `<div class="empty-state"><div style="font-size:2rem;">🔔</div><p>Sin avisos registrados.</p></div>`;
+    } else {
+      avisosEl.innerHTML = avisos.map(a => {
+        const icons = { info: 'ℹ️', warn: '⚠️', danger: '🚨', success: '✅' };
+        return `
+          <div class="aviso tipo-${a.tipo}">
+            <div class="aviso-icon">${icons[a.tipo]}</div>
+            <div class="aviso-body">
+              <div class="aviso-titulo">${a.titulo}</div>
+              ${a.desc ? `<div class="aviso-desc">${a.desc}</div>` : ''}
+            </div>
+            <button class="aviso-btn-del" onclick="eliminarAviso(${a.id})" title="Eliminar">✕</button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Avisos en inicio (resumido)
+    const avisosInicioEl = document.getElementById('avisos-inicio-list');
+    document.getElementById('badge-avisos').textContent = avisos.length;
+    if (avisos.length === 0) {
+      avisosInicioEl.innerHTML = `<p style="font-size:13px; color:var(--ink-muted);">Sin avisos activos.</p>`;
+    } else {
+      const top = avisos.slice(0, 3);
+      const icons = { info: 'ℹ️', warn: '⚠️', danger: '🚨', success: '✅' };
+      avisosInicioEl.innerHTML = top.map(a => `
+        <div class="aviso tipo-${a.tipo}" style="margin-bottom:6px;">
+          <div class="aviso-icon">${icons[a.tipo]}</div>
+          <div class="aviso-body">
+            <div class="aviso-titulo">${a.titulo}</div>
+            ${a.desc ? `<div class="aviso-desc">${a.desc}</div>` : ''}
+          </div>
+        </div>
+      `).join('') + (avisos.length > 3 ? `<p style="font-size:12px;color:var(--ink-muted);margin-top:4px;">+${avisos.length-3} más en la sección Avisos</p>` : '');
+    }
+  }
+
+  // Cerrar modal clickeando afuera
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', e => {
+      if (e.target === overlay) overlay.classList.remove('open');
+    });
+  });
+
+  renderAll();
 </script>
 </body>
 </html>
