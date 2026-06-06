@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel Admin · Matthew · Paola</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #F6F4EF; --surface: #FFFFFF; --surface2: #F0EDE6;
+  --ink: #1C1916; --ink-soft: #4A443C; --ink-muted: #8C8078;
+  --border: rgba(28,25,22,0.1); --border-med: rgba(28,25,22,0.18);
+  --green: #3B6D11; --green-bg: #EAF3DE; --green-text: #27500A;
+  --red: #A32D2D; --red-bg: #FCEBEB; --red-text: #791F1F;
+  --amber: #BA7517; --amber-bg: #FAEEDA;
+  --blue: #185FA5; --blue-bg: #E6F1FB; --blue-text: #0C447C;
+  --r: 12px; --r-sm: 8px;
+}
+body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--ink); min-height:100vh; font-size:14px; line-height:1.6; }
+
+/* LOGIN */
+#login-screen { position:fixed; inset:0; background:var(--ink); display:flex; align-items:center; justify-content:center; z-index:9999; padding:1.5rem; }
+.login-box { background:var(--surface); border-radius:var(--r); padding:2rem; width:100%; max-width:360px; }
+.login-title { font-family:'Playfair Display',serif; font-size:1.4rem; margin-bottom:.25rem; }
+.login-sub { font-size:12.5px; color:var(--ink-muted); margin-bottom:1.5rem; }
+.login-box input { width:100%; padding:9px 12px; border:0.5px solid var(--border-med); border-radius:var(--r-sm); font-family:'Inter',sans-serif; font-size:14px; background:var(--bg); color:var(--ink); outline:none; margin-bottom:.875rem; }
+.login-box input:focus { border-color:var(--ink); }
+.login-btn { width:100%; padding:10px; background:var(--ink); color:var(--bg); border:none; border-radius:var(--r-sm); font-family:'Inter',sans-serif; font-size:14px; font-weight:600; cursor:pointer; }
+.login-error { display:none; font-size:12px; color:var(--red); font-weight:500; margin-bottom:.75rem; text-align:center; }
+.login-badge { display:inline-block; font-size:11px; font-weight:600; padding:2px 10px; border-radius:20px; background:var(--amber-bg); color:var(--amber); margin-bottom:1rem; }
+
+/* APP */
+#app { display:none; }
+.site-header { background:var(--ink); color:#F6F4EF; }
+.header-top { max-width:900px; margin:0 auto; padding:1.5rem 1.5rem 1.25rem; display:flex; align-items:center; gap:1.25rem; }
+.header-name { font-family:'Playfair Display',serif; font-size:1.6rem; font-weight:400; color:#F6F4EF; }
+.header-sub { font-size:12px; color:rgba(246,244,239,0.45); margin-top:3px; }
+.header-year { font-size:11px; color:rgba(246,244,239,0.3); font-weight:500; letter-spacing:.08em; text-transform:uppercase; margin-top:6px; }
+.admin-badge { display:inline-block; font-size:10px; font-weight:700; padding:2px 10px; border-radius:20px; background:var(--amber-bg); color:var(--amber); margin-top:5px; }
+.logout-btn { margin-left:auto; background:rgba(246,244,239,0.1); border:0.5px solid rgba(246,244,239,0.2); color:rgba(246,244,239,0.6); font-family:'Inter',sans-serif; font-size:11.5px; padding:5px 12px; border-radius:20px; cursor:pointer; }
+.logout-btn:hover { background:rgba(246,244,239,0.18); }
+
+nav { border-top:0.5px solid rgba(246,244,239,0.12); }
+.nav-inner { max-width:900px; margin:0 auto; padding:0 1.5rem; display:flex; overflow-x:auto; }
+.nav-tab { padding:.7rem 1rem; font-size:12.5px; font-weight:500; color:rgba(246,244,239,0.45); border:none; background:none; cursor:pointer; border-bottom:2px solid transparent; white-space:nowrap; font-family:'Inter',sans-serif; transition:color .15s,border-color .15s; letter-spacing:.01em; }
+.nav-tab.active { color:#F6F4EF; border-bottom-color:#F6F4EF; }
+.nav-tab:hover:not(.active) { color:rgba(246,244,239,0.7); }
+.badge-count { font-size:10px; font-weight:700; padding:1px 6px; border-radius:20px; background:var(--amber-bg); color:var(--amber); margin-left:4px; }
+
+main { max-width:900px; margin:0 auto; padding:1.75rem 1.5rem; display:flex; flex-direction:column; gap:1.1rem; }
+.section { display:none; flex-direction:column; gap:1.1rem; }
+.section.active { display:flex; }
+
+.card { background:var(--surface); border:0.5px solid var(--border); border-radius:var(--r); overflow:hidden; }
+.card-head { padding:.875rem 1.25rem; border-bottom:0.5px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+.card-title { font-family:'Playfair Display',serif; font-size:.93rem; font-weight:400; }
+.card-body { padding:1.1rem 1.25rem; }
+
+.stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:.75rem; }
+.stat-box { background:var(--surface2); border-radius:var(--r-sm); padding:.875rem; text-align:center; }
+.stat-num { font-family:'Playfair Display',serif; font-size:2rem; font-weight:400; line-height:1; }
+.stat-label { font-size:10.5px; color:var(--ink-muted); font-weight:600; text-transform:uppercase; letter-spacing:.05em; margin-top:5px; }
+
+.pg { display:grid; grid-template-columns:auto 1fr; gap:.4rem .875rem; font-size:13.5px; }
+.pg-l { font-weight:500; color:var(--ink-soft); white-space:nowrap; }
+.pg-v { color:var(--ink); }
+.countdown-pill { display:inline-flex; align-items:center; gap:5px; font-size:11.5px; font-weight:600; padding:4px 12px; background:var(--green-bg); color:var(--green-text); border-radius:20px; margin-top:.75rem; }
+
+.visit-table { width:100%; border-collapse:collapse; font-size:13px; }
+.visit-table th { text-align:left; font-size:11px; font-weight:600; color:var(--ink-muted); text-transform:uppercase; letter-spacing:.05em; padding:.55rem .875rem; background:var(--surface2); border-bottom:0.5px solid var(--border); }
+.visit-table td { padding:.7rem .875rem; border-bottom:0.5px solid var(--border); vertical-align:middle; color:var(--ink-soft); }
+.visit-table tr:last-child td { border-bottom:none; }
+.visit-table tr:hover td { background:var(--bg); }
+.visit-table td:first-child { font-weight:500; color:var(--ink); white-space:nowrap; }
+.estado-pill { display:inline-flex; align-items:center; gap:4px; font-size:11.5px; font-weight:500; padding:3px 10px; border-radius:20px; white-space:nowrap; }
+.ep-a { background:var(--green-bg); color:var(--green-text); }
+.ep-n { background:var(--red-bg); color:var(--red-text); }
+.ep-r { background:var(--amber-bg); color:var(--amber); }
+.ep-p { background:var(--blue-bg); color:var(--blue-text); }
+
+.horario-opts { display:flex; gap:.625rem; flex-wrap:wrap; margin-bottom:.875rem; }
+.horario-btn { padding:7px 16px; border-radius:var(--r-sm); border:1.5px solid var(--border-med); background:var(--surface2); font-family:'Inter',sans-serif; font-size:13px; font-weight:500; cursor:pointer; color:var(--ink); transition:border-color .15s,background .15s; }
+.horario-btn.sel { border-color:var(--ink); background:var(--ink); color:var(--bg); }
+
+.form-row { display:flex; flex-direction:column; gap:4px; margin-bottom:.75rem; }
+.form-row label { font-size:11.5px; font-weight:600; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.04em; }
+input[type="text"],input[type="date"],input[type="time"],select,textarea { width:100%; padding:8px 12px; border:0.5px solid var(--border-med); border-radius:var(--r-sm); background:var(--bg); color:var(--ink); font-family:'Inter',sans-serif; font-size:13.5px; outline:none; transition:border-color .15s; }
+input:focus,select:focus,textarea:focus { border-color:var(--ink); }
+textarea { resize:vertical; min-height:68px; }
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:.625rem; }
+
+.btn { display:inline-flex; align-items:center; gap:5px; padding:7px 15px; border-radius:var(--r-sm); font-family:'Inter',sans-serif; font-size:12.5px; font-weight:500; cursor:pointer; border:none; transition:opacity .15s,transform .1s; }
+.btn:active { transform:scale(.98); }
+.btn-primary { background:var(--ink); color:var(--bg); }
+.btn-primary:hover { opacity:.82; }
+.btn-ghost { background:none; border:0.5px solid var(--border-med); color:var(--ink); }
+.btn-ghost:hover { background:var(--bg); }
+.btn-sm { padding:5px 11px; font-size:11.5px; }
+.btn-danger { background:var(--red-bg); color:var(--red); border:none; }
+.btn-success { background:var(--green-bg); color:var(--green-text); border:none; }
+.del-btn { background:none; border:none; cursor:pointer; color:var(--ink-muted); font-size:13px; padding:2px 5px; border-radius:4px; flex-shrink:0; }
+.del-btn:hover { color:var(--red); }
+
+.modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:200; align-items:center; justify-content:center; padding:1.5rem; }
+.modal-overlay.open { display:flex; }
+.modal { background:var(--surface); border-radius:var(--r); padding:1.5rem; width:100%; max-width:460px; border:0.5px solid var(--border); max-height:90vh; overflow-y:auto; }
+.modal-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.25rem; }
+.modal-title { font-family:'Playfair Display',serif; font-size:1.05rem; font-weight:400; }
+.modal-close { background:none; border:none; cursor:pointer; font-size:16px; color:var(--ink-muted); padding:4px; }
+.modal-foot { display:flex; gap:8px; justify-content:flex-end; margin-top:1.1rem; }
+
+.confirm-msg { display:none; font-size:12px; color:var(--green); font-weight:500; margin-top:.5rem; }
+.norma-block { padding:.875rem 1rem; border-radius:var(--r-sm); margin-bottom:.5rem; font-size:13.5px; color:var(--ink-soft); display:flex; align-items:flex-start; justify-content:space-between; gap:.5rem; }
+.nb-blue { background:var(--blue-bg); border-left:3px solid var(--blue); }
+.nb-red { background:var(--red-bg); border-left:3px solid var(--red); }
+.nb-amber { background:var(--amber-bg); border-left:3px solid var(--amber); }
+.nb-green { background:var(--green-bg); border-left:3px solid var(--green); }
+.aviso-item { display:flex; align-items:flex-start; gap:.75rem; padding:.75rem .875rem; border-radius:var(--r-sm); margin-bottom:.5rem; font-size:13.5px; }
+.av-info { background:var(--blue-bg); } .av-warn { background:var(--amber-bg); }
+.av-danger { background:var(--red-bg); } .av-success { background:var(--green-bg); }
+.av-body { flex:1; }
+.av-titulo { font-weight:500; color:var(--ink); }
+.av-desc { font-size:12.5px; color:var(--ink-muted); margin-top:2px; }
+
+/* AVISO PADRE highlight */
+.aviso-padre-card { background:var(--amber-bg); border:1.5px solid var(--amber); border-radius:var(--r-sm); padding:.875rem 1rem; margin-bottom:.625rem; font-size:13px; }
+.aviso-padre-card .av-header { font-weight:600; color:var(--amber); margin-bottom:.25rem; font-size:12px; text-transform:uppercase; letter-spacing:.04em; }
+.new-dot { display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--red); margin-right:5px; }
+
+.site-footer { text-align:center; font-size:11px; color:var(--ink-muted); padding:1.5rem; border-top:0.5px solid var(--border); margin-top:1.5rem; }
+
+@media(max-width:620px){
+  .stats-row{grid-template-columns:1fr 1fr;} .grid-2{grid-template-columns:1fr;}
+  .pg{grid-template-columns:1fr;} .pg-l{color:var(--ink-muted);font-size:12px;}
+  .header-name{font-size:1.3rem;}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN ADMIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-badge">🔐 Panel Administrativo</div>
+    <div class="login-title">Portal Matthew</div>
+    <div class="login-sub">Acceso: Madre de Matthew · Control total</div>
+    <div class="login-error" id="login-err">❌ Contraseña incorrecta.</div>
+    <input type="password" id="login-pass" placeholder="Contraseña de administradora" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" onclick="doLogin()">Ingresar al panel</button>
+  </div>
+</div>
+
+<!-- PANEL ADMIN -->
+<div id="app">
+<header class="site-header">
+  <div class="header-top">
+    <div>
+      <div class="header-name">Matthew · Panel Admin</div>
+      <div class="header-sub">Control total del sistema · Madre de Matthew</div>
+      <div class="admin-badge">🔐 ADMINISTRADORA</div>
+    </div>
+    <button class="logout-btn" onclick="cerrarSesion()">Salir</button>
+  </div>
+  <nav>
+    <div class="nav-inner">
+      <button class="nav-tab active" onclick="tab('inicio',this)">Resumen</button>
+      <button class="nav-tab" onclick="tab('historial',this)">Historial</button>
+      <button class="nav-tab" onclick="tab('estado',this)">Marcar estado</button>
+      <button class="nav-tab" onclick="tab('proxima',this)">Próxima visita</button>
+      <button class="nav-tab" onclick="tab('avisos-padre',this)">Avisos del padre <span class="badge-count" id="badge-pad-new">0</span></button>
+      <button class="nav-tab" onclick="tab('normas',this)">Normas</button>
+      <button class="nav-tab" onclick="tab('avisos',this)">Avisos del sistema</button>
+      <button class="nav-tab" onclick="tab('config',this)">⚙ Config</button>
+    </div>
+  </nav>
+</header>
+
+<main>
+
+  <!-- RESUMEN -->
+  <div class="section active" id="sec-inicio">
+    <div class="card">
+      <div class="card-head"><span class="card-title">Estadísticas de visitas</span></div>
+      <div class="card-body">
+        <div class="stats-row">
+          <div class="stat-box"><div class="stat-num" id="st-total">0</div><div class="stat-label">Total</div></div>
+          <div class="stat-box"><div class="stat-num" id="st-asistio" style="color:var(--green)">0</div><div class="stat-label">Asistió</div></div>
+          <div class="stat-box"><div class="stat-num" id="st-no" style="color:var(--red)">0</div><div class="stat-label">No asistió</div></div>
+          <div class="stat-box"><div class="stat-num" id="st-pad" style="color:var(--amber)">0</div><div class="stat-label">Avisos padre</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="card-avisos-pad-resumen" style="display:none;">
+      <div class="card-head"><span class="card-title">⚠️ Avisos pendientes del padre</span></div>
+      <div class="card-body" id="res-avisos-padre"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <span class="card-title">Próxima visita programada</span>
+        <button class="btn btn-ghost btn-sm" onclick="tab('proxima',document.querySelectorAll('.nav-tab')[3])">Editar</button>
+      </div>
+      <div class="card-body" id="res-proxima"><p style="font-size:13px;color:var(--ink-muted);">No hay visita programada.</p></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><span class="card-title">Última visita registrada</span></div>
+      <div class="card-body" id="res-ultima"><p style="font-size:13px;color:var(--ink-muted);">Sin registros.</p></div>
+    </div>
+  </div>
+
+  <!-- HISTORIAL COMPLETO -->
+  <div class="section" id="sec-historial">
+    <div class="card">
+      <div class="card-head">
+        <span class="card-title">Historial completo de visitas</span>
+        <button class="btn btn-ghost btn-sm" onclick="exportarCSV()">⬇ Exportar CSV</button>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="visit-table">
+          <thead><tr><th>Fecha</th><th>Horario</th><th>Estado</th><th>Observación</th><th>Registrado por</th><th></th></tr></thead>
+          <tbody id="tbody-admin"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- MARCAR ESTADO (control de la madre) -->
+  <div class="section" id="sec-estado">
+    <div class="card">
+      <div class="card-head"><span class="card-title">Marcar estado de una visita</span></div>
+      <div class="card-body">
+        <p style="font-size:13px;color:var(--ink-muted);margin-bottom:1rem;">Tú tienes el control para confirmar o corregir el estado de cualquier visita. El padre solo registra; tú validas.</p>
+        <div class="form-row">
+          <label>Fecha de la visita (sábado)</label>
+          <input type="date" id="e-fecha">
+        </div>
+        <div style="margin-bottom:.875rem;">
+          <div style="font-size:11.5px;font-weight:600;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.04em;margin-bottom:.5rem;">Horario</div>
+          <div class="horario-opts">
+            <button class="horario-btn" id="e-opt1" onclick="selHorarioEstado('10:00','13:00',this)">🕙 10:00 a.m. – 1:00 p.m.</button>
+            <button class="horario-btn" id="e-opt2" onclick="selHorarioEstado('15:00','17:00',this)">🕒 3:00 p.m. – 5:00 p.m.</button>
+          </div>
+          <input type="hidden" id="e-h1"><input type="hidden" id="e-h2">
+        </div>
+        <div class="form-row">
+          <label>Observación</label>
+          <textarea id="e-notas" placeholder="Notas para el expediente..."></textarea>
+        </div>
+        <div style="font-size:11.5px;font-weight:600;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.04em;margin-bottom:.625rem;">Estado a registrar</div>
+        <div style="display:flex;gap:.625rem;flex-wrap:wrap;">
+          <button class="btn btn-success" onclick="marcarEstado('asistio')">🟢 Asistió</button>
+          <button class="btn btn-danger" onclick="marcarEstado('noasistio')">🔴 No asistió</button>
+        </div>
+        <div class="confirm-msg" id="estado-ok">✓ Estado registrado correctamente.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRÓXIMA VISITA (editable) -->
+  <div class="section" id="sec-proxima">
+    <div class="card">
+      <div class="card-head"><span class="card-title">Programar próxima visita</span></div>
+      <div class="card-body">
+        <div class="grid-2">
+          <div class="form-row"><label>Fecha (sábado)</label><input type="date" id="pf"></div>
+          <div class="form-row"><label>Lugar</label><input type="text" id="pl" placeholder="Domicilio materno"></div>
+        </div>
+        <div class="form-row">
+          <label>Horario</label>
+          <div class="horario-opts" style="margin-top:.25rem;">
+            <button class="horario-btn" id="ph-opt1" onclick="selHorarioProxima('10:00','13:00',this)">🕙 10:00 a.m. – 1:00 p.m.</button>
+            <button class="horario-btn" id="ph-opt2" onclick="selHorarioProxima('15:00','17:00',this)">🕒 3:00 p.m. – 5:00 p.m.</button>
+          </div>
+          <input type="hidden" id="ph1"><input type="hidden" id="ph2">
+        </div>
+        <div class="form-row"><label>Condición especial</label><input type="text" id="pc" placeholder="Ej: Visita supervisada por tratarse de un bebé."></div>
+        <div class="form-row"><label>Notas</label><textarea id="pn" placeholder="Observaciones adicionales..."></textarea></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:.25rem;">
+          <button class="btn btn-primary" onclick="guardarProxima()">Guardar</button>
+          <button class="btn btn-danger btn-sm" onclick="borrarProxima()">Eliminar</button>
+        </div>
+        <div class="confirm-msg" id="prox-ok">✓ Guardado correctamente</div>
+      </div>
+    </div>
+    <div class="card" id="prox-preview" style="display:none;">
+      <div class="card-head"><span class="card-title">Vista previa</span></div>
+      <div class="card-body" id="prox-preview-body"></div>
+    </div>
+  </div>
+
+  <!-- AVISOS DEL PADRE -->
+  <div class="section" id="sec-avisos-padre">
+    <div class="card">
+      <div class="card-head">
+        <span class="card-title">Avisos enviados por el padre</span>
+        <button class="btn btn-danger btn-sm" onclick="limpiarAvisosPadre()">Limpiar leídos</button>
+      </div>
+      <div class="card-body" id="lista-avisos-padre-admin"></div>
+    </div>
+  </div>
+
+  <!-- NORMAS -->
+  <div class="section" id="sec-normas">
+    <div class="card">
+      <div class="card-head">
+        <span class="card-title">Normas y condiciones</span>
+        <button class="btn btn-primary btn-sm" onclick="abrir('m-norma')">+ Agregar</button>
+      </div>
+      <div class="card-body" id="lista-normas"></div>
+    </div>
+  </div>
+
+  <!-- AVISOS DEL SISTEMA -->
+  <div class="section" id="sec-avisos">
+    <div class="card">
+      <div class="card-head">
+        <span class="card-title">Avisos del sistema</span>
+        <button class="btn btn-primary btn-sm" onclick="abrir('m-aviso')">+ Aviso</button>
+      </div>
+      <div class="card-body" id="lista-avisos-sistema"></div>
+    </div>
+  </div>
+
+  <!-- CONFIGURACIÓN -->
+  <div class="section" id="sec-config">
+    <div class="card">
+      <div class="card-head"><span class="card-title">⚠️ Zona de mantenimiento</span></div>
+      <div class="card-body">
+        <p style="font-size:13px;color:var(--ink-soft);margin-bottom:1rem;">Acciones de limpieza del sistema. Úsalas con cuidado — estas acciones no se pueden deshacer.</p>
+        <div style="display:flex;flex-direction:column;gap:.75rem;">
+          <div>
+            <p style="font-size:12.5px;color:var(--ink-muted);margin-bottom:.4rem;">Elimina solo los registros de visita marcados como «prueba»:</p>
+            <button class="btn btn-danger" onclick="borrarPruebas()">🗑 Borrar registros de prueba</button>
+          </div>
+          <div>
+            <p style="font-size:12.5px;color:var(--ink-muted);margin-bottom:.4rem;">Elimina TODOS los registros de visita (no elimina normas ni avisos del sistema):</p>
+            <button class="btn btn-danger" onclick="borrarTodasVisitas()">🗑 Borrar TODAS las visitas</button>
+          </div>
+          <div>
+            <p style="font-size:12.5px;color:var(--ink-muted);margin-bottom:.4rem;">Reinicia el sistema completo a estado inicial vacío:</p>
+            <button class="btn btn-danger" onclick="resetTotal()">⚠ Reset total del sistema</button>
+          </div>
+          <div>
+            <p style="font-size:12.5px;color:var(--ink-muted);margin-bottom:.4rem;">Cargar normas y avisos de ejemplo predeterminados:</p>
+            <button class="btn btn-ghost" onclick="cargarEjemplos()">↺ Cargar datos iniciales</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+<footer class="site-footer">Panel administrativo · Matthew · Solo acceso: Madre · 2026</footer>
+</div>
+
+<!-- MODAL: Norma -->
+<div class="modal-overlay" id="m-norma">
+  <div class="modal">
+    <div class="modal-head"><span class="modal-title">Agregar norma</span><button class="modal-close" onclick="cerrar('m-norma')">✕</button></div>
+    <div class="form-row"><label>Texto</label><textarea id="ni" placeholder="Escribe la norma..."></textarea></div>
+    <div class="form-row"><label>Categoría</label>
+      <select id="ncat">
+        <option value="blue">📋 General / Legal</option>
+        <option value="red">🚫 Prohibición</option>
+        <option value="amber">⚠️ Advertencia</option>
+        <option value="green">✅ Acuerdo / Positivo</option>
+      </select>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="cerrar('m-norma')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarNorma()">Agregar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Aviso sistema -->
+<div class="modal-overlay" id="m-aviso">
+  <div class="modal">
+    <div class="modal-head"><span class="modal-title">Nuevo aviso del sistema</span><button class="modal-close" onclick="cerrar('m-aviso')">✕</button></div>
+    <div class="form-row"><label>Título</label><input type="text" id="at" placeholder="Ej: Cambio de horario"></div>
+    <div class="form-row"><label>Descripción</label><textarea id="ad" placeholder="Detalle del aviso..."></textarea></div>
+    <div class="form-row"><label>Tipo</label>
+      <select id="atp">
+        <option value="info">ℹ️ Informativo</option>
+        <option value="warn">⚠️ Atención</option>
+        <option value="danger">🚨 Urgente</option>
+        <option value="success">✅ Positivo</option>
+      </select>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="cerrar('m-aviso')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarAviso()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── CONTRASEÑA (cámbiala por una segura) ──────────────────────────────────
+const CLAVE_ADMIN = "MatthewAdmin_Paola2026";
+
+function doLogin() {
+  const val = document.getElementById('login-pass').value;
+  if (val === CLAVE_ADMIN) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    cargarFormProxima();
+    renderAll();
+  } else {
+    const err = document.getElementById('login-err');
+    err.style.display = 'block';
+    document.getElementById('login-pass').value = '';
+    setTimeout(() => err.style.display = 'none', 3000);
+  }
+}
+function cerrarSesion() {
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('login-pass').value = '';
+}
+
+// ── STORAGE ────────────────────────────────────────────────────────────────
+function get(k) { try { return JSON.parse(localStorage.getItem(k)) || []; } catch { return []; } }
+function set(k, v) { localStorage.setItem(k, JSON.stringify(v)); }
+function getOne(k) { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } }
+
+// ── UTILIDADES ─────────────────────────────────────────────────────────────
+const MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+function fmtFecha(s) {
+  if (!s) return '';
+  const [y, m, d] = s.split('-');
+  const dt = new Date(parseInt(y), parseInt(m) - 1, parseInt(d));
+  return `${'Dom Lun Mar Mié Jue Vie Sáb'.split(' ')[dt.getDay()]} ${parseInt(d)} de ${MESES[parseInt(m) - 1]} de ${y}`;
+}
+function fmtH(h) {
+  if (!h) return '';
+  const [hh, mm] = h.split(':');
+  const hr = parseInt(hh);
+  return `${hr % 12 || 12}:${mm} ${hr >= 12 ? 'p.m.' : 'a.m.'}`;
+}
+function fmtTs(ts) {
+  const d = new Date(ts);
+  return d.toLocaleDateString('es-PE', { day:'2-digit', month:'2-digit', year:'numeric' }) + ' ' +
+    d.toLocaleTimeString('es-PE', { hour:'2-digit', minute:'2-digit' });
+}
+function esSabado(s) {
+  const [y, m, d] = s.split('-');
+  return new Date(parseInt(y), parseInt(m) - 1, parseInt(d)).getDay() === 6;
+}
+function diasRest(s) {
+  const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
+  const v = new Date(s + 'T00:00:00');
+  const d = Math.round((v - hoy) / 864e5);
+  if (d === 0) return 'Hoy';
+  if (d === 1) return 'Mañana';
+  if (d < 0) return `Hace ${Math.abs(d)} días`;
+  return `Faltan ${d} días`;
+}
+function estadoPill(e) {
+  if (e === 'asistio') return '<span class="estado-pill ep-a">🟢 Asistió</span>';
+  if (e === 'noasistio') return '<span class="estado-pill ep-n">🔴 No asistió</span>';
+  if (e === 'pendiente') return '<span class="estado-pill ep-p">🔵 Pendiente</span>';
+  return '<span class="estado-pill ep-r">🟡 Sin confirmar</span>';
+}
+
+// ── TABS ───────────────────────────────────────────────────────────────────
+function tab(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('sec-' + id).classList.add('active');
+  btn.classList.add('active');
+  if (id === 'proxima') cargarFormProxima();
+  renderAll();
+}
+function cerrar(id) { document.getElementById(id).classList.remove('open'); }
+function abrir(id) { document.getElementById(id).classList.add('open'); }
+document.querySelectorAll('.modal-overlay').forEach(o => o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); }));
+
+// ── HORARIOS ───────────────────────────────────────────────────────────────
+function selHorarioEstado(h1, h2, btn) {
+  document.getElementById('e-h1').value = h1; document.getElementById('e-h2').value = h2;
+  document.querySelectorAll('#e-opt1,#e-opt2').forEach(b => b.classList.remove('sel'));
+  btn.classList.add('sel');
+}
+function selHorarioProxima(h1, h2, btn) {
+  document.getElementById('ph1').value = h1; document.getElementById('ph2').value = h2;
+  document.querySelectorAll('#ph-opt1,#ph-opt2').forEach(b => b.classList.remove('sel'));
+  btn.classList.add('sel');
+}
+
+// ── MARCAR ESTADO (madre) ──────────────────────────────────────────────────
+function marcarEstado(estado) {
+  const fecha = document.getElementById('e-fecha').value;
+  const h1 = document.getElementById('e-h1').value;
+  const h2 = document.getElementById('e-h2').value;
+  if (!fecha) { alert('Selecciona la fecha.'); return; }
+  if (!esSabado(fecha)) { alert('Las visitas son los sábados.'); return; }
+  if (!h1) { alert('Selecciona el horario.'); return; }
+
+  const visitas = get('visitas_v2');
+  const existe = visitas.find(v => v.fecha === fecha);
+  const notas = document.getElementById('e-notas').value.trim();
+  if (existe) {
+    existe.estado = estado; existe.h1 = h1; existe.h2 = h2;
+    if (notas) existe.notas = notas;
+    existe.tsAdmin = Date.now(); existe.modificadoPor = 'admin';
+  } else {
+    visitas.unshift({ id: Date.now(), fecha, h1, h2, estado, notas, ts: Date.now(), registradoPor: 'admin', tsAdmin: Date.now() });
+  }
+  visitas.sort((a, b) => b.fecha.localeCompare(a.fecha));
+  set('visitas_v2', visitas);
+  const ok = document.getElementById('estado-ok');
+  ok.style.display = 'block';
+  document.getElementById('e-notas').value = '';
+  document.querySelectorAll('#e-opt1,#e-opt2').forEach(b => b.classList.remove('sel'));
+  setTimeout(() => ok.style.display = 'none', 3000);
+  renderAll();
+}
+
+// ── PRÓXIMA VISITA ─────────────────────────────────────────────────────────
+function guardarProxima() {
+  const f = document.getElementById('pf').value;
+  if (!f) { alert('Ingresa la fecha.'); return; }
+  set('proxima_v2', { fecha: f, h1: document.getElementById('ph1').value, h2: document.getElementById('ph2').value, lugar: document.getElementById('pl').value.trim(), condicion: document.getElementById('pc').value.trim(), notas: document.getElementById('pn').value.trim() });
+  const ok = document.getElementById('prox-ok'); ok.style.display = 'block';
+  setTimeout(() => ok.style.display = 'none', 2500);
+  renderAll(); renderProximaPreview();
+}
+function borrarProxima() {
+  if (!confirm('¿Eliminar la visita programada?')) return;
+  localStorage.removeItem('proxima_v2');
+  ['pf','pl','pc','pn'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('ph1').value = ''; document.getElementById('ph2').value = '';
+  document.querySelectorAll('#ph-opt1,#ph-opt2').forEach(b => b.classList.remove('sel'));
+  document.getElementById('prox-preview').style.display = 'none';
+  renderAll();
+}
+function cargarFormProxima() {
+  const p = getOne('proxima_v2'); if (!p) return;
+  document.getElementById('pf').value = p.fecha || '';
+  document.getElementById('pl').value = p.lugar || '';
+  document.getElementById('pc').value = p.condicion || '';
+  document.getElementById('pn').value = p.notas || '';
+  if (p.h1 === '10:00') { document.getElementById('ph-opt1').classList.add('sel'); document.getElementById('ph1').value = p.h1; document.getElementById('ph2').value = p.h2; }
+  if (p.h1 === '15:00') { document.getElementById('ph-opt2').classList.add('sel'); document.getElementById('ph1').value = p.h1; document.getElementById('ph2').value = p.h2; }
+  renderProximaPreview();
+}
+function renderProximaPreview() {
+  const p = getOne('proxima_v2');
+  const el = document.getElementById('prox-preview'); const body = document.getElementById('prox-preview-body');
+  if (!p) { el.style.display = 'none'; return; }
+  el.style.display = 'block';
+  const h = p.h1 && p.h2 ? fmtH(p.h1) + ' a ' + fmtH(p.h2) : '';
+  body.innerHTML = `<div class="pg">
+    <span class="pg-l">Fecha:</span><span class="pg-v">${fmtFecha(p.fecha)}</span>
+    ${h ? `<span class="pg-l">Hora:</span><span class="pg-v">${h}</span>` : ''}
+    ${p.lugar ? `<span class="pg-l">Lugar:</span><span class="pg-v">${p.lugar}</span>` : ''}
+    ${p.condicion ? `<span class="pg-l">Condición:</span><span class="pg-v">${p.condicion}</span>` : ''}
+  </div><div class="countdown-pill">📅 ${diasRest(p.fecha)}</div>`;
+}
+
+// ── NORMAS ─────────────────────────────────────────────────────────────────
+function guardarNorma() {
+  const txt = document.getElementById('ni').value.trim(); if (!txt) return;
+  const items = get('normas_v2');
+  items.push({ id: Date.now(), texto: txt, cat: document.getElementById('ncat').value });
+  set('normas_v2', items); cerrar('m-norma'); renderAll();
+}
+function eliminarNorma(id) { if (!confirm('¿Eliminar esta norma?')) return; set('normas_v2', get('normas_v2').filter(i => i.id !== id)); renderAll(); }
+
+// ── AVISOS SISTEMA ─────────────────────────────────────────────────────────
+function guardarAviso() {
+  const t = document.getElementById('at').value.trim(); if (!t) return;
+  const av = get('avisos_v2');
+  av.unshift({ id: Date.now(), titulo: t, desc: document.getElementById('ad').value.trim(), tipo: document.getElementById('atp').value });
+  set('avisos_v2', av); cerrar('m-aviso'); renderAll();
+}
+function eliminarAviso(id) { set('avisos_v2', get('avisos_v2').filter(a => a.id !== id)); renderAll(); }
+
+// ── AVISOS PADRE ───────────────────────────────────────────────────────────
+function limpiarAvisosPadre() {
+  if (!confirm('¿Marcar todos los avisos del padre como leídos y limpiar?')) return;
+  set('avisos_padre_v2', []);
+  renderAll();
+}
+
+// ── CONFIG ─────────────────────────────────────────────────────────────────
+function borrarPruebas() {
+  if (!confirm('¿Eliminar registros de prueba (los 2 predeterminados)?')) return;
+  const visitas = get('visitas_v2').filter(v => v.id !== 1 && v.id !== 2);
+  set('visitas_v2', visitas); renderAll();
+}
+function borrarTodasVisitas() {
+  if (!confirm('¿Eliminar TODAS las visitas? Esta acción no se puede deshacer.')) return;
+  set('visitas_v2', []); renderAll();
+}
+function resetTotal() {
+  if (!confirm('⚠ ¿Reiniciar el sistema completo? Se borrarán TODOS los datos.')) return;
+  if (!confirm('Esta acción es irreversible. ¿Confirmas el reset total?')) return;
+  localStorage.clear(); renderAll();
+}
+
+function cargarEjemplos() {
+  if (!confirm('¿Cargar datos iniciales de ejemplo? Esto agregará normas y avisos de ejemplo.')) return;
+  if (get('normas_v2').length === 0) {
+    set('normas_v2', [
+      {id:1,texto:'Toda comunicación referida a Matthew deberá realizarse exclusivamente por medios formales y escritos (correo electrónico o mensajería oficial). No se utilizará WhatsApp como medio de coordinación.',cat:'blue'},
+      {id:2,texto:'Las visitas se realizarán únicamente los sábados, en el horario previamente acordado: 10:00 a.m. – 1:00 p.m. o 3:00 p.m. – 5:00 p.m. No se permitirán visitas fuera de estos horarios.',cat:'blue'},
+      {id:3,texto:'El registro de cada visita debe completarse el mismo día sábado antes de las 11:59 p.m. La visita no registrada en plazo quedará como "No asistió" en el expediente.',cat:'amber'},
+      {id:4,texto:'Queda estrictamente PROHIBIDO tomar fotografías, realizar grabaciones de audio o video dentro o fuera del domicilio materno.',cat:'red'},
+      {id:5,texto:'Queda PROHIBIDO grabar o fotografiar a la madre, familiares presentes o cualquier persona del entorno de Matthew sin su consentimiento expreso.',cat:'red'},
+      {id:6,texto:'No se permitirá el ingreso al domicilio materno de personas no autorizadas durante la visita.',cat:'red'},
+      {id:7,texto:'El visitante deberá llegar con las manos limpias y sin perfumes, colonias o aromas fuertes, en consideración a la salud del bebé.',cat:'green'},
+      {id:8,texto:'No se permitirá la visita si el visitante presenta síntomas de gripe, fiebre, tos u otras enfermedades contagiosas.',cat:'amber'},
+      {id:9,texto:'Se deberán respetar los horarios de sueño y alimentación de Matthew. La visita podrá interrumpirse si el bienestar del bebé así lo requiere.',cat:'green'},
+      {id:10,texto:'Cualquier incumplimiento de estas normas quedará registrado como parte del expediente legal en curso.',cat:'red'}
+    ]);
+  }
+  if (get('avisos_v2').length === 0) {
+    set('avisos_v2', [
+      {id:3,titulo:'Proceso legal activo',desc:'Este portal forma parte del expediente y seguimiento legal. Todos los registros tienen valor documental.',tipo:'warn'},
+      {id:2,titulo:'Condición especial del bebé',desc:'Matthew es un bebé. Las visitas están sujetas a condiciones de supervisión y cuidado estrictas por su bienestar.',tipo:'info'},
+      {id:1,titulo:'Prohibición de grabaciones y fotografías',desc:'Está absolutamente prohibido grabar, fotografiar o filmar dentro o fuera del domicilio materno durante las visitas.',tipo:'danger'}
+    ]);
+  }
+  renderAll();
+  alert('Datos iniciales cargados correctamente.');
+}
+
+// ── EXPORTAR CSV ───────────────────────────────────────────────────────────
+function exportarCSV() {
+  const visitas = get('visitas_v2');
+  if (visitas.length === 0) { alert('No hay registros para exportar.'); return; }
+  const rows = [['Fecha','Horario inicio','Horario fin','Estado','Observación','Registrado por','Timestamp']];
+  visitas.forEach(v => rows.push([v.fecha, v.h1 || '', v.h2 || '', v.estado, v.notas || '', v.registradoPor || '', new Date(v.ts).toLocaleString('es-PE')]));
+  const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'visitas_matthew_' + new Date().toISOString().split('T')[0] + '.csv';
+  a.click(); URL.revokeObjectURL(url);
+}
+
+// ── RENDER ALL ─────────────────────────────────────────────────────────────
+function renderAll() {
+  const visitas = get('visitas_v2');
+  const normas = get('normas_v2');
+  const avisos = get('avisos_v2');
+  const proxima = getOne('proxima_v2');
+  const avisosPadre = get('avisos_padre_v2');
+
+  // Stats
+  document.getElementById('st-total').textContent = visitas.length;
+  document.getElementById('st-asistio').textContent = visitas.filter(v => v.estado === 'asistio').length;
+  document.getElementById('st-no').textContent = visitas.filter(v => v.estado === 'noasistio').length;
+  document.getElementById('st-pad').textContent = avisosPadre.length;
+
+  // Badge avisos padre
+  const badge = document.getElementById('badge-pad-new');
+  badge.textContent = avisosPadre.length > 0 ? avisosPadre.length : '';
+
+  // Resumen: avisos del padre
+  const cardResPadre = document.getElementById('card-avisos-pad-resumen');
+  const resAvPadre = document.getElementById('res-avisos-padre');
+  if (avisosPadre.length > 0) {
+    cardResPadre.style.display = 'block';
+    resAvPadre.innerHTML = avisosPadre.map(a =>
+      `<div class="aviso-padre-card">
+        <div class="av-header"><span class="new-dot"></span>Aviso de inasistencia</div>
+        <strong>Fecha:</strong> ${fmtFecha(a.fecha)} — ${fmtH(a.h1)}<br>
+        <strong>Motivo:</strong> ${a.motivo}<br>
+        <span style="font-size:11.5px;color:var(--ink-muted);">Enviado: ${fmtTs(a.enviadoTs)}</span>
+      </div>`
+    ).join('');
+  } else {
+    cardResPadre.style.display = 'none';
+  }
+
+  // Resumen próxima
+  const rp = document.getElementById('res-proxima');
+  if (proxima) {
+    const h = proxima.h1 && proxima.h2 ? fmtH(proxima.h1) + ' a ' + fmtH(proxima.h2) : '';
+    rp.innerHTML = `<div class="pg">
+      <span class="pg-l">Fecha:</span><span class="pg-v">${fmtFecha(proxima.fecha)}</span>
+      ${h ? `<span class="pg-l">Hora:</span><span class="pg-v">${h}</span>` : ''}
+      ${proxima.lugar ? `<span class="pg-l">Lugar:</span><span class="pg-v">${proxima.lugar}</span>` : ''}
+    </div><div class="countdown-pill">📅 ${diasRest(proxima.fecha)}</div>`;
+  } else {
+    rp.innerHTML = '<p style="font-size:13px;color:var(--ink-muted);">No hay visita programada.</p>';
+  }
+
+  // Resumen última
+  const ru = document.getElementById('res-ultima');
+  if (visitas.length > 0) {
+    const v = visitas[0];
+    const h = v.h1 && v.h2 ? fmtH(v.h1) + ' – ' + fmtH(v.h2) : '';
+    ru.innerHTML = `<div style="display:flex;gap:.625rem;align-items:center;flex-wrap:wrap;">${estadoPill(v.estado)}<span style="font-size:13.5px;font-weight:500;">${fmtFecha(v.fecha)}</span>${h ? `<span style="font-size:12px;color:var(--ink-muted);">${h}</span>` : ''}</div>${v.notas ? `<p style="font-size:12.5px;color:var(--ink-muted);margin-top:5px;">${v.notas}</p>` : ''}`;
+  } else {
+    ru.innerHTML = '<p style="font-size:13px;color:var(--ink-muted);">Sin registros aún.</p>';
+  }
+
+  // Historial admin
+  const tbody = document.getElementById('tbody-admin');
+  if (visitas.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--ink-muted);font-size:13px;">Sin registros aún.</td></tr>';
+  } else {
+    tbody.innerHTML = visitas.map(v => {
+      const fd = v.fecha ? v.fecha.split('-').reverse().join('/') : '';
+      const h = v.h1 && v.h2 ? fmtH(v.h1) + ' – ' + fmtH(v.h2) : '—';
+      const reg = v.registradoPor === 'admin' ? '<span style="font-size:11px;color:var(--blue);">Madre</span>' : '<span style="font-size:11px;color:var(--ink-muted);">Padre</span>';
+      return `<tr>
+        <td>${fd}</td>
+        <td style="white-space:nowrap;">${h}</td>
+        <td>${estadoPill(v.estado)}</td>
+        <td>${v.notas || '—'}</td>
+        <td>${reg}</td>
+        <td><button class="del-btn" onclick="eliminarVisita(${v.id})">✕</button></td>
+      </tr>`;
+    }).join('');
+  }
+
+  // Avisos del padre (sección)
+  const lapd = document.getElementById('lista-avisos-padre-admin');
+  lapd.innerHTML = avisosPadre.length === 0
+    ? '<p style="font-size:13px;color:var(--ink-muted);">No hay avisos del padre.</p>'
+    : avisosPadre.map(a =>
+      `<div class="aviso-padre-card">
+        <div class="av-header"><span class="new-dot"></span>Aviso de inasistencia anticipada</div>
+        <strong>Fecha de visita:</strong> ${fmtFecha(a.fecha)} — ${fmtH(a.h1)}<br>
+        <strong>Motivo declarado:</strong> ${a.motivo}<br>
+        <span style="font-size:11.5px;color:var(--ink-muted);">Enviado el: ${fmtTs(a.enviadoTs)}</span>
+      </div>`
+    ).join('');
+
+  // Normas
+  const ln = document.getElementById('lista-normas');
+  ln.innerHTML = normas.length === 0
+    ? '<p style="font-size:13px;color:var(--ink-muted);">Sin normas.</p>'
+    : normas.map(n => `<div class="norma-block nb-${n.cat}"><span>${n.texto}</span><button class="del-btn" onclick="eliminarNorma(${n.id})">✕</button></div>`).join('');
+
+  // Avisos sistema
+  const icons = { info: 'ℹ️', warn: '⚠️', danger: '🚨', success: '✅' };
+  const la = document.getElementById('lista-avisos-sistema');
+  la.innerHTML = avisos.length === 0
+    ? '<p style="font-size:13px;color:var(--ink-muted);">Sin avisos.</p>'
+    : avisos.map(a =>
+      `<div class="aviso-item av-${a.tipo}"><span>${icons[a.tipo]}</span>
+       <div class="av-body"><div class="av-titulo">${a.titulo}</div>${a.desc ? `<div class="av-desc">${a.desc}</div>` : ''}</div>
+       <button class="del-btn" onclick="eliminarAviso(${a.id})">✕</button></div>`
+    ).join('');
+}
+
+function eliminarVisita(id) {
+  if (!confirm('¿Eliminar este registro?')) return;
+  set('visitas_v2', get('visitas_v2').filter(v => v.id !== id));
+  renderAll();
+}
+
+// Init
+renderAll();
+</script>
+</body>
+</html>
