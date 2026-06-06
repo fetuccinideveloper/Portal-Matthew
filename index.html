@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portal de Visitas · Matthew</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #F6F4EF; --surface: #FFFFFF; --surface2: #F0EDE6;
+  --ink: #1C1916; --ink-soft: #4A443C; --ink-muted: #8C8078;
+  --border: rgba(28,25,22,0.1); --border-med: rgba(28,25,22,0.18);
+  --green: #3B6D11; --green-bg: #EAF3DE; --green-text: #27500A;
+  --red: #A32D2D; --red-bg: #FCEBEB; --red-text: #791F1F;
+  --amber: #BA7517; --amber-bg: #FAEEDA;
+  --blue: #185FA5; --blue-bg: #E6F1FB; --blue-text: #0C447C;
+  --r: 12px; --r-sm: 8px;
+}
+body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--ink); min-height:100vh; font-size:14px; line-height:1.6; }
+
+.site-header { background:var(--ink); color:#F6F4EF; }
+.header-top { max-width:900px; margin:0 auto; padding:1.5rem 1.5rem 1.25rem; display:flex; align-items:center; gap:1.5rem; }
+.photo-circle {
+  width:84px; height:84px; border-radius:50%;
+  border:3px solid rgba(246,244,239,0.3);
+  overflow:hidden; flex-shrink:0;
+}
+.photo-circle img { width:100%; height:100%; object-fit:cover; display:block; }
+.header-info { flex:1; }
+.header-name { font-family:'Playfair Display',serif; font-size:1.8rem; font-weight:400; color:#F6F4EF; letter-spacing:-0.01em; line-height:1.15; }
+.header-sub { font-size:12px; color:rgba(246,244,239,0.45); margin-top:4px; }
+.header-year { font-size:11px; color:rgba(246,244,239,0.3); font-weight:500; letter-spacing:.08em; text-transform:uppercase; margin-top:8px; }
+
+nav { border-top:0.5px solid rgba(246,244,239,0.12); }
+.nav-inner { max-width:900px; margin:0 auto; padding:0 1.5rem; display:flex; overflow-x:auto; }
+.nav-tab { padding:.7rem 1rem; font-size:12.5px; font-weight:500; color:rgba(246,244,239,0.45); border:none; background:none; cursor:pointer; border-bottom:2px solid transparent; white-space:nowrap; font-family:'Inter',sans-serif; transition:color .15s,border-color .15s; }
+.nav-tab.active { color:#F6F4EF; border-bottom-color:#F6F4EF; }
+.nav-tab:hover:not(.active) { color:rgba(246,244,239,0.75); }
+
+main { max-width:900px; margin:0 auto; padding:1.75rem 1.5rem; display:flex; flex-direction:column; gap:1.1rem; }
+.section { display:none; flex-direction:column; gap:1.1rem; }
+.section.active { display:flex; }
+
+.card { background:var(--surface); border:0.5px solid var(--border); border-radius:var(--r); overflow:hidden; }
+.card-head { padding:.875rem 1.25rem; border-bottom:0.5px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+.card-title { font-family:'Playfair Display',serif; font-size:.95rem; font-weight:400; color:var(--ink); }
+.card-body { padding:1.1rem 1.25rem; }
+
+.stats-row { display:grid; grid-template-columns:repeat(3,1fr); gap:.75rem; }
+.stat-box { background:var(--surface2); border-radius:var(--r-sm); padding:.875rem; text-align:center; }
+.stat-num { font-family:'Playfair Display',serif; font-size:2rem; font-weight:400; line-height:1; }
+.stat-label { font-size:10.5px; color:var(--ink-muted); font-weight:600; text-transform:uppercase; letter-spacing:.05em; margin-top:5px; }
+
+.pg { display:grid; grid-template-columns:auto 1fr; gap:.4rem .875rem; font-size:13.5px; align-items:start; }
+.pg-l { font-weight:500; color:var(--ink-soft); white-space:nowrap; }
+.pg-v { color:var(--ink); }
+.countdown-pill { display:inline-flex; align-items:center; gap:5px; font-size:11.5px; font-weight:600; padding:4px 12px; background:var(--green-bg); color:var(--green-text); border-radius:20px; margin-top:.75rem; }
+
+/* TABLA */
+.visit-table { width:100%; border-collapse:collapse; font-size:13px; }
+.visit-table th { text-align:left; font-size:10.5px; font-weight:600; color:var(--ink-muted); text-transform:uppercase; letter-spacing:.05em; padding:.55rem .875rem; background:var(--surface2); border-bottom:0.5px solid var(--border); white-space:nowrap; }
+.visit-table td { padding:.7rem .875rem; border-bottom:0.5px solid var(--border); vertical-align:middle; color:var(--ink-soft); }
+.visit-table tr:last-child td { border-bottom:none; }
+.visit-table tbody tr:hover td { background:var(--bg); }
+.visit-table td:first-child { font-weight:500; color:var(--ink); white-space:nowrap; }
+.visit-table td.obs { font-size:12px; color:var(--ink-muted); max-width:180px; }
+.visit-table td.tiempo { font-size:12px; color:var(--ink-soft); white-space:nowrap; }
+
+.ep { display:inline-flex; align-items:center; gap:4px; font-size:11.5px; font-weight:500; padding:3px 10px; border-radius:20px; white-space:nowrap; }
+.ep-a { background:var(--green-bg); color:var(--green-text); }
+.ep-n { background:var(--red-bg); color:var(--red-text); }
+.ep-r { background:var(--amber-bg); color:var(--amber); }
+.ep-p { background:var(--blue-bg); color:var(--blue-text); }
+
+/* NORMAS */
+.norma-block { padding:.875rem 1rem; border-radius:var(--r-sm); margin-bottom:.5rem; font-size:13.5px; color:var(--ink-soft); display:flex; align-items:flex-start; gap:.5rem; line-height:1.6; }
+.nb-blue { background:var(--blue-bg); border-left:3px solid var(--blue); }
+.nb-red { background:var(--red-bg); border-left:3px solid var(--red); }
+.nb-amber { background:var(--amber-bg); border-left:3px solid var(--amber); }
+.nb-green { background:var(--green-bg); border-left:3px solid var(--green); }
+.nb-icon { font-size:15px; flex-shrink:0; margin-top:1px; }
+
+/* AVISO */
+.aviso-item { display:flex; align-items:flex-start; gap:.75rem; padding:.75rem .875rem; border-radius:var(--r-sm); margin-bottom:.5rem; }
+.av-info { background:var(--blue-bg); }
+.av-warn { background:var(--amber-bg); }
+.av-danger { background:var(--red-bg); }
+.av-success { background:var(--green-bg); }
+.av-icon { font-size:16px; flex-shrink:0; margin-top:1px; }
+.av-body { flex:1; }
+.av-titulo { font-weight:500; color:var(--ink); font-size:13.5px; }
+.av-desc { font-size:12.5px; color:var(--ink-muted); margin-top:2px; line-height:1.5; }
+
+.badge-count { font-size:11px; font-weight:600; padding:2px 9px; border-radius:20px; background:var(--amber-bg); color:var(--amber); }
+
+.btn { display:inline-flex; align-items:center; gap:5px; padding:7px 15px; border-radius:var(--r-sm); font-family:'Inter',sans-serif; font-size:12.5px; font-weight:500; cursor:pointer; border:none; transition:opacity .15s,transform .1s; }
+.btn:active { transform:scale(.98); }
+.btn-ghost { background:none; border:0.5px solid var(--border-med); color:var(--ink); }
+.btn-ghost:hover { background:var(--bg); }
+.btn-sm { padding:5px 11px; font-size:11.5px; }
+
+.empty { text-align:center; padding:2rem 1rem; color:var(--ink-muted); font-size:13px; }
+
+.edit-hint { font-size:11.5px; color:var(--blue-text); background:var(--blue-bg); padding:.5rem .875rem; border-radius:var(--r-sm); display:inline-flex; align-items:center; gap:5px; }
+
+.site-footer { text-align:center; font-size:11px; color:var(--ink-muted); padding:1.5rem; border-top:0.5px solid var(--border); margin-top:1rem; }
+
+.duracion-chip { font-size:11px; background:var(--surface2); padding:2px 8px; border-radius:20px; color:var(--ink-muted); font-weight:500; white-space:nowrap; }
+
+@media(max-width:580px){
+  .header-name{font-size:1.45rem;} .photo-circle{width:68px;height:68px;}
+  .stats-row{grid-template-columns:1fr 1fr;}
+  .pg{grid-template-columns:1fr;}
+  .visit-table{font-size:11.5px;} .visit-table th,.visit-table td{padding:.45rem .625rem;}
+  .visit-table td.obs,.visit-table td.tiempo{display:none;}
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-top">
+    <div class="photo-circle">
+      <img src="img/matthew.jpg" alt="Matthew">
+    </div>
+    <div class="header-info">
+      <div class="header-name">Matthew</div>
+      <div class="header-sub">Registro oficial de visitas · Documento de seguimiento</div>
+      <div class="header-year">Portal privado · 2026</div>
+    </div>
+  </div>
+  <nav>
+    <div class="nav-inner">
+      <button class="nav-tab active" onclick="tab('inicio',this)">Inicio</button>
+      <button class="nav-tab" onclick="tab('historial',this)">Historial</button>
+      <button class="nav-tab" onclick="tab('proxima',this)">Próxima visita</button>
+      <button class="nav-tab" onclick="tab('normas',this)">Normas</button>
+      <button class="nav-tab" onclick="tab('avisos',this)">Avisos</button>
+    </div>
+  </nav>
+</header>
+
+<main>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     DATOS — EDITA AQUÍ MANUALMENTE
+     ═══════════════════════════════════════════════════════════════ -->
+<script>
+
+/* ─── PRÓXIMA VISITA ────────────────────────────────────────────
+   Edita los campos debajo. Deja vacío ("") si no aplica.        */
+const PROXIMA = {
+  fecha:      "2026-06-13",           // año-mes-día (debe ser sábado)
+  h_inicio:   "00:00",               // hora inicio  (HH:MM)
+  h_fin:      "00:00",               // hora fin     (HH:MM)
+  lugar:      "Domicilio materno",
+  condicion:  "Aún no confirmado.",
+  notas:      "Visita supervisada por tratarse de un bebé"
+};
+
+/* ─── HISTORIAL DE VISITAS ──────────────────────────────────────
+   Agrega una línea por cada visita. El más reciente primero.
+   estado: "asistio" | "noasistio" | "reprogramada" | "pendiente"
+   entrada / salida: hora real (HH:MM). Deja "" si no aplica.   */
+const VISITAS = [
+  {
+    fecha:       "2026-06-06",
+    horario:     "00.",
+    estado:      "noasistio",
+    entrada:     "00:00",
+    salida:      "00:00",
+    observacion: "No se presentó"
+  },
+  {
+    fecha:       "2026-05-30",
+    horario:     "12:00 pm.",
+    estado:      "asistio",
+    entrada:     "12:00",
+    salida:      "12:40",
+    observacion: "Visita realizada en domicilio materno."
+  },
+  // ── Agrega más visitas aquí con el mismo formato ──
+  // {
+  //   fecha:       "2026-05-23",
+  //   horario:     "3:00 – 5:00 p.m.",
+  //   estado:      "reprogramada",
+  //   entrada:     "",
+  //   salida:      "",
+  //   observacion: ""
+  // },
+];
+
+/* ─── NORMAS ────────────────────────────────────────────────────
+   tipo: "blue" (general) | "red" (prohibición) |
+         "amber" (advertencia) | "green" (acuerdo)               */
+const NORMAS = [
+  { tipo:"blue",  texto:"Las visitas se realizarán únicamente los sábados, en el horario previamente acordado: 10:00 a.m. – 1:00 p.m. o 3:00 p.m. – 5:00 p.m. No se permitirán visitas fuera de estos horarios sin acuerdo escrito previo." },
+  { tipo:"blue",  texto:"Toda comunicación referida a Matthew deberá realizarse exclusivamente por medios formales y escritos (correo electrónico u oficio). No se utilizará WhatsApp como medio principal de coordinación." },
+  { tipo:"red",   texto:"Queda estrictamente PROHIBIDO tomar fotografías, realizar grabaciones de audio o video dentro o fuera del domicilio materno. Esta prohibición aplica especialmente a imágenes del interior del hogar." },
+  { tipo:"red",   texto:"Queda PROHIBIDO grabar o fotografiar a la madre, familiares presentes o cualquier persona del entorno de Matthew sin su consentimiento expreso y por escrito." },
+  { tipo:"red",   texto:"No se permitirá el ingreso al domicilio materno de personas no autorizadas durante la visita, bajo ninguna circunstancia." },
+  { tipo:"amber", texto:"El visitante deberá llegar puntualmente. Los retrasos superiores a 20 minutos sin aviso previo podrán ser considerados como inasistencia en el expediente." },
+  { tipo:"green", texto:"El visitante deberá llegar con las manos limpias y sin perfumes, colonias o aromas fuertes, en consideración a la salud y bienestar del bebé." },
+  { tipo:"amber", texto:"No se permitirá la visita si el visitante presenta síntomas de gripe, fiebre, tos u otras enfermedades contagiosas. El bienestar de Matthew es prioridad." },
+  { tipo:"green", texto:"Se deberán respetar los horarios de sueño y alimentación de Matthew. La visita podrá interrumpirse si el bienestar del bebé así lo requiere, sin que esto constituya incumplimiento." },
+  { tipo:"red",   texto:"Cualquier incumplimiento de estas normas quedará registrado y podrá ser presentado como evidencia dentro del proceso legal en curso." },
+];
+
+/* ─── AVISOS ────────────────────────────────────────────────────
+   tipo: "info" | "warn" | "danger" | "success"                  */
+const AVISOS = [
+  { tipo:"danger", titulo:"Prohibición de grabaciones y fotografías",    desc:"Está absolutamente prohibido grabar, fotografiar o filmar dentro o fuera del domicilio materno durante las visitas. Cualquier violación será reportada." },
+  { tipo:"warn",   titulo:"Proceso legal activo",                         desc:"Este portal forma parte del expediente y seguimiento legal. Todos los registros tienen valor documental." },
+  { tipo:"info",   titulo:"Condición especial del bebé",                  desc:"Matthew es un bebé recién nacido. Las visitas están sujetas a condiciones de supervisión y cuidado estrictas por su bienestar." },
+  { tipo:"warn",   titulo:"Sin comunicación por WhatsApp",                desc:"Toda coordinación debe realizarse por medios formales escritos. No se responderán mensajes de WhatsApp relacionados con las visitas." },
+];
+
+</script>
+<!-- ════════════════ FIN DE DATOS ════════════════════════════════ -->
+
+
+  <!-- INICIO -->
+  <div class="section active" id="sec-inicio">
+    <div class="card">
+      <div class="card-head"><span class="card-title">Resumen de visitas</span></div>
+      <div class="card-body">
+        <div class="stats-row">
+          <div class="stat-box"><div class="stat-num" id="st-total">—</div><div class="stat-label">Total</div></div>
+          <div class="stat-box"><div class="stat-num" id="st-a" style="color:var(--green)">—</div><div class="stat-label">Asistió</div></div>
+          <div class="stat-box"><div class="stat-num" id="st-n" style="color:var(--red)">—</div><div class="stat-label">No asistió</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <span class="card-title">Próxima visita programada</span>
+        <button class="btn btn-ghost btn-sm" onclick="tab('proxima',document.querySelectorAll('.nav-tab')[2])">Ver detalle →</button>
+      </div>
+      <div class="card-body" id="inicio-proxima"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><span class="card-title">Última visita registrada</span></div>
+      <div class="card-body" id="inicio-ultima"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <span class="card-title">Avisos activos</span>
+        <span class="badge-count" id="badge-av">0</span>
+      </div>
+      <div class="card-body" id="inicio-avisos"></div>
+    </div>
+  </div>
+
+  <!-- HISTORIAL -->
+  <div class="section" id="sec-historial">
+    <div class="card">
+      <div class="card-head">
+        <span class="card-title">Historial completo de visitas</span>
+        <span class="edit-hint">sección VISITAS</span>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="visit-table">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Horario programado</th>
+              <th>Estado</th>
+              <th>Entrada</th>
+              <th>Salida</th>
+              <th class="tiempo">Tiempo</th>
+              <th class="obs">Observación</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRÓXIMA VISITA -->
+  <div class="section" id="sec-proxima">
+    <div class="card">
+      <div class="card-head">
+        <span class="card-title">Próxima visita programada</span>
+        <span class="edit-hint">✏️ Edita en el código · sección PROXIMA</span>
+      </div>
+      <div class="card-body" id="proxima-detail"></div>
+    </div>
+  </div>
+
+  <!-- NORMAS -->
+  <div class="section" id="sec-normas">
+    <div class="card">
+      <div class="card-head">
+        <span class="card-title">Normas y condiciones de visita</span>
+        <span class="edit-hint"> sección NORMAS</span>
+      </div>
+      <div class="card-body" id="lista-normas"></div>
+    </div>
+  </div>
+
+  <!-- AVISOS -->
+  <div class="section" id="sec-avisos">
+    <div class="card">
+      <div class="card-head">
+        <span class="card-title">Avisos importantes</span>
+        <span class="edit-hint">sección AVISOS</span>
+      </div>
+      <div class="card-body" id="lista-avisos"></div>
+    </div>
+  </div>
+
+</main>
+
+<footer class="site-footer">Documento de registro oficial · Matthew · Portal privado 2026</footer>
+
+<script>
+const MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+const DIAS_S = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+
+function fmtFecha(s) {
+  if (!s) return '';
+  const [y,m,d] = s.split('-');
+  const dt = new Date(parseInt(y), parseInt(m)-1, parseInt(d));
+  return `${DIAS_S[dt.getDay()]} ${parseInt(d)} de ${MESES[parseInt(m)-1]} de ${y}`;
+}
+
+function fmtFechaCorta(s) {
+  if (!s) return '';
+  return s.split('-').reverse().join('/');
+}
+
+function fmtH(h) {
+  if (!h) return '';
+  const [hh,mm] = h.split(':');
+  const hr = parseInt(hh);
+  return `${hr%12||12}:${mm} ${hr>=12?'p.m.':'a.m.'}`;
+}
+
+function diasRest(s) {
+  const hoy = new Date(); hoy.setHours(0,0,0,0);
+  const v = new Date(s+'T00:00:00');
+  const d = Math.round((v-hoy)/864e5);
+  if (d===0) return '¡Hoy!';
+  if (d===1) return 'Mañana';
+  if (d<0) return `Hace ${Math.abs(d)} día${Math.abs(d)!==1?'s':''}`;
+  return `Faltan ${d} días`;
+}
+
+function calcTiempo(entrada, salida) {
+  if (!entrada || !salida) return '';
+  const [h1,m1] = entrada.split(':').map(Number);
+  const [h2,m2] = salida.split(':').map(Number);
+  let mins = (h2*60+m2)-(h1*60+m1);
+  if (mins<=0) return '';
+  const h = Math.floor(mins/60);
+  const m = mins%60;
+  return h>0 ? (m>0?`${h}h ${m}min`:`${h}h`) : `${m}min`;
+}
+
+function estadoPill(e) {
+  const map = {
+    asistio:     ['ep-a','🟢 Asistió'],
+    noasistio:   ['ep-n','🔴 No asistió'],
+    reprogramada:['ep-r','🟡 Reprogramada'],
+    pendiente:   ['ep-p','🔵 Pendiente'],
+  };
+  const [cls,label] = map[e] || ['ep-p', e];
+  return `<span class="ep ${cls}">${label}</span>`;
+}
+
+function tab(id, btn) {
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('sec-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function render() {
+  // STATS
+  const total = VISITAS.length;
+  const asistio = VISITAS.filter(v=>v.estado==='asistio').length;
+  const noasistio = VISITAS.filter(v=>v.estado==='noasistio').length;
+  document.getElementById('st-total').textContent = total;
+  document.getElementById('st-a').textContent = asistio;
+  document.getElementById('st-n').textContent = noasistio;
+
+  // PRÓXIMA — inicio
+  const ip = document.getElementById('inicio-proxima');
+  if (PROXIMA && PROXIMA.fecha) {
+    const h = PROXIMA.h_inicio && PROXIMA.h_fin ? fmtH(PROXIMA.h_inicio)+' a '+fmtH(PROXIMA.h_fin) : '';
+    ip.innerHTML = `<div class="pg">
+      <span class="pg-l">Fecha:</span><span class="pg-v">${fmtFecha(PROXIMA.fecha)}</span>
+      ${h?`<span class="pg-l">Hora:</span><span class="pg-v">${h}</span>`:''}
+      ${PROXIMA.lugar?`<span class="pg-l">Lugar:</span><span class="pg-v">${PROXIMA.lugar}</span>`:''}
+      ${PROXIMA.condicion?`<span class="pg-l">Condición:</span><span class="pg-v">${PROXIMA.condicion}</span>`:''}
+      ${PROXIMA.notas?`<span class="pg-l">Notas:</span><span class="pg-v">${PROXIMA.notas}</span>`:''}
+    </div>
+    <div class="countdown-pill">📅 ${diasRest(PROXIMA.fecha)}</div>`;
+  } else {
+    ip.innerHTML = `<p style="font-size:13px;color:var(--ink-muted);">No hay visita programada.</p>`;
+  }
+
+  // PRÓXIMA — tab
+  const pd = document.getElementById('proxima-detail');
+  pd.innerHTML = ip.innerHTML;
+
+  // ÚLTIMA VISITA
+  const iu = document.getElementById('inicio-ultima');
+  if (VISITAS.length>0) {
+    const v = VISITAS[0];
+    const dur = calcTiempo(v.entrada, v.salida);
+    iu.innerHTML = `<div style="display:flex;gap:.625rem;align-items:center;flex-wrap:wrap;">
+      ${estadoPill(v.estado)}
+      <span style="font-size:13.5px;font-weight:500;">${fmtFecha(v.fecha)}</span>
+      ${v.horario?`<span style="font-size:12px;color:var(--ink-muted);">${v.horario}</span>`:''}
+      ${dur?`<span class="duracion-chip">⏱ ${dur}</span>`:''}
+    </div>
+    ${v.observacion?`<p style="font-size:12.5px;color:var(--ink-muted);margin-top:6px;">${v.observacion}</p>`:''}`;
+  } else {
+    iu.innerHTML = `<p style="font-size:13px;color:var(--ink-muted);">Sin registros aún.</p>`;
+  }
+
+  // HISTORIAL TABLA
+  const tbody = document.getElementById('tbody');
+  if (VISITAS.length===0) {
+    tbody.innerHTML = `<tr><td colspan="7" class="empty">Sin registros.</td></tr>`;
+  } else {
+    tbody.innerHTML = VISITAS.map(v => {
+      const dur = calcTiempo(v.entrada, v.salida);
+      const entradaLabel = v.entrada ? fmtH(v.entrada) : '—';
+      const salidaLabel  = v.salida  ? fmtH(v.salida)  : '—';
+      return `<tr>
+        <td>${fmtFechaCorta(v.fecha)}</td>
+        <td style="white-space:nowrap;">${v.horario||'—'}</td>
+        <td>${estadoPill(v.estado)}</td>
+        <td style="white-space:nowrap;">${entradaLabel}</td>
+        <td style="white-space:nowrap;">${salidaLabel}</td>
+        <td class="tiempo">${dur?`<span class="duracion-chip">⏱ ${dur}</span>`:''}</td>
+        <td class="obs">${v.observacion||'—'}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  // NORMAS
+  const ln = document.getElementById('lista-normas');
+  const normaIcons = { blue:'📋', red:'🚫', amber:'⚠️', green:'✅' };
+  ln.innerHTML = NORMAS.map(n =>
+    `<div class="norma-block nb-${n.tipo}"><span class="nb-icon">${normaIcons[n.tipo]}</span><span>${n.texto}</span></div>`
+  ).join('');
+
+  // AVISOS
+  document.getElementById('badge-av').textContent = AVISOS.length;
+  const avIcons = { info:'ℹ️', warn:'⚠️', danger:'🚨', success:'✅' };
+  const avHtml = items => items.length===0 ? '<p style="font-size:13px;color:var(--ink-muted);">Sin avisos.</p>' :
+    items.map(a=>`<div class="aviso-item av-${a.tipo}">
+      <span class="av-icon">${avIcons[a.tipo]}</span>
+      <div class="av-body">
+        <div class="av-titulo">${a.titulo}</div>
+        ${a.desc?`<div class="av-desc">${a.desc}</div>`:''}
+      </div>
+    </div>`).join('');
+  document.getElementById('lista-avisos').innerHTML = avHtml(AVISOS);
+  document.getElementById('inicio-avisos').innerHTML = avHtml(AVISOS.slice(0,3)) +
+    (AVISOS.length>3?`<p style="font-size:12px;color:var(--ink-muted);margin-top:4px;">+${AVISOS.length-3} más en Avisos</p>`:'');
+}
+
+render();
+</script>
+</body>
+</html>
