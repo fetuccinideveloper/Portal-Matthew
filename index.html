@@ -1,81 +1,927 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Registro de Visitas - Matthew</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Registro de Visitas · Matthew</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cream: #FAF8F3;
+    --warm-white: #FFFFFF;
+    --ink: #1A1714;
+    --ink-soft: #4A4540;
+    --ink-muted: #857F79;
+    --border: rgba(26,23,20,0.1);
+    --border-strong: rgba(26,23,20,0.2);
+    --accent: #3B6D11;
+    --accent-bg: #EAF3DE;
+    --accent-text: #27500A;
+    --warn: #BA7517;
+    --warn-bg: #FAEEDA;
+    --danger: #A32D2D;
+    --danger-bg: #FCEBEB;
+    --info: #185FA5;
+    --info-bg: #E6F1FB;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --cream: #1C1A17;
+      --warm-white: #252220;
+      --ink: #F0EDE8;
+      --ink-soft: #C8C3BC;
+      --ink-muted: #857F79;
+      --border: rgba(240,237,232,0.1);
+      --border-strong: rgba(240,237,232,0.2);
+      --accent: #97C459;
+      --accent-bg: #173404;
+      --accent-text: #C0DD97;
+      --warn: #EF9F27;
+      --warn-bg: #412402;
+      --danger: #F09595;
+      --danger-bg: #501313;
+      --info: #85B7EB;
+      --info-bg: #042C53;
+    }
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  header {
+    background: var(--warm-white);
+    border-bottom: 0.5px solid var(--border);
+    padding: 1.5rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .header-left h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.4rem;
+    font-weight: 400;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+
+  .header-left p {
+    font-size: 12px;
+    color: var(--ink-muted);
+    margin-top: 2px;
+  }
+
+  .header-right {
+    display: flex;
+    gap: 8px;
+  }
+
+  nav {
+    background: var(--warm-white);
+    border-bottom: 0.5px solid var(--border);
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    padding: 0 2rem;
+  }
+
+  .nav-tab {
+    padding: 0.75rem 1.25rem;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-muted);
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: color 0.15s, border-color 0.15s;
+  }
+
+  .nav-tab.active {
+    color: var(--ink);
+    border-bottom-color: var(--ink);
+  }
+
+  .nav-tab:hover:not(.active) {
+    color: var(--ink-soft);
+  }
+
+  main {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .section { display: none; }
+  .section.active { display: flex; flex-direction: column; gap: 1.25rem; }
+
+  .card {
+    background: var(--warm-white);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+
+  .card-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--ink);
+  }
+
+  .badge {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+
+  .badge-success { background: var(--accent-bg); color: var(--accent-text); }
+  .badge-warn { background: var(--warn-bg); color: var(--warn); }
+  .badge-danger { background: var(--danger-bg); color: var(--danger); }
+  .badge-info { background: var(--info-bg); color: var(--info); }
+
+  .proxima-fecha {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+  }
+
+  .fecha-big {
+    font-family: 'DM Serif Display', serif;
+    font-size: 3rem;
+    line-height: 1;
+    color: var(--ink);
+    font-weight: 400;
+  }
+
+  .fecha-info { display: flex; flex-direction: column; gap: 4px; }
+  .fecha-mes { font-size: 1rem; font-weight: 500; color: var(--ink); }
+  .fecha-sub { font-size: 12px; color: var(--ink-muted); }
+
+  .countdown-chip {
+    margin-top: 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 12px;
+    background: var(--accent-bg);
+    color: var(--accent-text);
+    border-radius: 20px;
+  }
+
+  .historial-list { display: flex; flex-direction: column; gap: 0; }
+
+  .visita-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.875rem 0;
+    border-bottom: 0.5px solid var(--border);
+    flex-wrap: wrap;
+  }
+
+  .visita-row:last-child { border-bottom: none; }
+
+  .visita-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .dot-success { background: var(--accent); }
+  .dot-warn { background: var(--warn); }
+  .dot-danger { background: var(--danger); }
+
+  .visita-fecha {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+    min-width: 120px;
+  }
+
+  .visita-nota {
+    font-size: 13px;
+    color: var(--ink-soft);
+    flex: 1;
+  }
+
+  .visita-duracion {
+    font-size: 12px;
+    color: var(--ink-muted);
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 2.5rem 1rem;
+    color: var(--ink-muted);
+  }
+
+  .empty-state p { font-size: 13px; margin-top: 6px; }
+
+  .avisos-list { display: flex; flex-direction: column; gap: 0.625rem; }
+
+  .aviso {
+    display: flex;
+    gap: 0.875rem;
+    padding: 0.875rem 1rem;
+    border-radius: var(--radius-sm);
+    border: 0.5px solid var(--border);
+    align-items: flex-start;
+  }
+
+  .aviso-icon { font-size: 16px; margin-top: 2px; flex-shrink: 0; }
+  .aviso-body { flex: 1; }
+  .aviso-titulo { font-size: 13px; font-weight: 500; color: var(--ink); }
+  .aviso-desc { font-size: 12px; color: var(--ink-muted); margin-top: 2px; }
+  .aviso-btn-del { background: none; border: none; cursor: pointer; font-size: 14px; color: var(--ink-muted); padding: 2px 4px; border-radius: 4px; }
+  .aviso-btn-del:hover { color: var(--danger); }
+
+  .aviso.tipo-info { background: var(--info-bg); border-color: transparent; }
+  .aviso.tipo-warn { background: var(--warn-bg); border-color: transparent; }
+  .aviso.tipo-danger { background: var(--danger-bg); border-color: transparent; }
+  .aviso.tipo-success { background: var(--accent-bg); border-color: transparent; }
+
+  .form-row { display: flex; flex-direction: column; gap: 4px; margin-bottom: 0.875rem; }
+  .form-row label { font-size: 12px; font-weight: 500; color: var(--ink-soft); }
+
+  input[type="text"], input[type="date"], input[type="time"], select, textarea {
+    width: 100%;
+    padding: 8px 12px;
+    border: 0.5px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--ink);
+  }
+
+  textarea { resize: vertical; min-height: 72px; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s;
+    border: none;
+  }
+
+  .btn:active { transform: scale(0.98); }
+
+  .btn-primary {
+    background: var(--ink);
+    color: var(--cream);
+  }
+
+  .btn-primary:hover { opacity: 0.85; }
+
+  .btn-ghost {
+    background: none;
+    border: 0.5px solid var(--border-strong);
+    color: var(--ink);
+  }
+
+  .btn-ghost:hover { background: var(--cream); }
+
+  .btn-danger {
+    background: var(--danger-bg);
+    color: var(--danger);
+  }
+
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.35);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--warm-white);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    width: 100%;
+    max-width: 440px;
+    border: 0.5px solid var(--border);
+  }
+
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+  }
+
+  .modal-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.1rem;
+    font-weight: 400;
+  }
+
+  .modal-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    color: var(--ink-muted);
+    line-height: 1;
+    padding: 4px;
+  }
+
+  .modal-footer { display: flex; gap: 8px; justify-content: flex-end; margin-top: 1.25rem; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.625rem; }
+
+  .stat-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; }
+
+  .stat-card {
+    background: var(--cream);
+    border-radius: var(--radius-sm);
+    padding: 0.875rem 1rem;
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2rem;
+    font-weight: 400;
+    color: var(--ink);
+    line-height: 1.1;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--ink-muted);
+    margin-top: 4px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .divider { height: 0.5px; background: var(--border); margin: 0.5rem 0; }
+
+  @media (max-width: 600px) {
+    header { padding: 1rem 1.25rem; }
+    nav { padding: 0 1.25rem; }
+    main { padding: 1.25rem 1rem; }
+    .stat-cards { grid-template-columns: 1fr 1fr; }
+    .grid-2 { grid-template-columns: 1fr; }
+    .fecha-big { font-size: 2.25rem; }
+  }
+</style>
 </head>
 <body>
 
 <header>
-  <h1>Portal de Visitas</h1>
-  <p>Registro organizado de visitas, avisos y cuidado de Matthew</p>
+  <div class="header-left">
+    <h1>✦ Visitas · Matthew</h1>
+    <p id="fecha-hoy"></p>
+  </div>
+  <div class="header-right">
+    <button class="btn btn-primary" onclick="abrirModalVisita()">+ Registrar visita</button>
+  </div>
 </header>
 
 <nav>
-  <a href="#proxima">Próxima visita</a>
-  <a href="#registro">Registro</a>
-  <a href="#salud">Salud</a>
-  <a href="#normas">Normas</a>
+  <button class="nav-tab active" onclick="cambiarTab('inicio', this)">Inicio</button>
+  <button class="nav-tab" onclick="cambiarTab('historial', this)">Historial</button>
+  <button class="nav-tab" onclick="cambiarTab('avisos', this)">Avisos</button>
+  <button class="nav-tab" onclick="cambiarTab('proxima', this)">Próxima visita</button>
 </nav>
 
-<section id="proxima" class="card">
-  <h2>Próxima visita programada</h2>
-  <p><strong>Fecha:</strong> Sábado 13 de junio de 2026</p>
-  <p><strong>Hora:</strong> 10:00 a.m. a 12:00 p.m.</p>
-  <p><strong>Lugar:</strong> Domicilio materno</p>
-  <p><strong>Condición:</strong> Visita supervisada por tratarse de un bebé.</p>
-</section>
+<main>
 
-<section id="registro" class="card">
-  <h2>Registro de visitas</h2>
+  <!-- TAB: INICIO -->
+  <div class="section active" id="sec-inicio">
 
-  <table>
-    <tr>
-      <th>Fecha</th>
-      <th>Horario</th>
-      <th>Estado</th>
-      <th>Observación</th>
-    </tr>
-    <tr>
-      <td>06/06/2026</td>
-      <td>10:00 a.m. - 12:00 p.m.</td>
-      <td class="asistio">Asistió</td>
-      <td>Visita realizada en domicilio.</td>
-    </tr>
-    <tr>
-      <td>30/05/2026</td>
-      <td>10:00 a.m. - 12:00 p.m.</td>
-      <td class="no-asistio">No asistió</td>
-      <td>No se presentó.</td>
-    </tr>
-  </table>
-</section>
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Resumen general</span>
+      </div>
+      <div class="stat-cards">
+        <div class="stat-card">
+          <div class="stat-num" id="stat-total">0</div>
+          <div class="stat-label">Visitas totales</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="stat-asistio" style="color:var(--accent)">0</div>
+          <div class="stat-label">Asistió</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="stat-noasistio" style="color:var(--danger)">0</div>
+          <div class="stat-label">No asistió</div>
+        </div>
+      </div>
+    </div>
 
-<section id="salud" class="card">
-  <h2>Información importante de salud</h2>
-  <ul>
-    <li>Evitar perfumes o aromas fuertes.</li>
-    <li>Lavado de manos antes de cargar al bebé.</li>
-    <li>No asistir si presenta gripe, fiebre o tos.</li>
-    <li>Respetar horarios de sueño y alimentación.</li>
-  </ul>
-</section>
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Próxima visita programada</span>
+        <button class="btn btn-ghost" style="font-size:12px" onclick="cambiarTab('proxima', document.querySelectorAll('.nav-tab')[3])">Editar</button>
+      </div>
+      <div id="proxima-inicio">
+        <p style="font-size:13px; color:var(--ink-muted);">No hay visita programada.</p>
+      </div>
+    </div>
 
-<section id="normas" class="card">
-  <h2>Normas de comunicación</h2>
-  <p>
-    Toda comunicación deberá referirse exclusivamente a temas relacionados con Matthew:
-    salud, visitas, alimentación, emergencias o necesidades importantes.
-  </p>
-  <p>
-    No se utilizará WhatsApp como medio principal de coordinación.
-  </p>
-</section>
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Última visita registrada</span>
+      </div>
+      <div id="ultima-visita">
+        <p style="font-size:13px; color:var(--ink-muted);">Sin registros aún.</p>
+      </div>
+    </div>
 
-<footer>
-  <p>Portal privado - 2026</p>
-</footer>
+    <div class="card" id="card-avisos-inicio">
+      <div class="card-header">
+        <span class="card-title">Avisos activos</span>
+        <span class="badge badge-warn" id="badge-avisos">0</span>
+      </div>
+      <div id="avisos-inicio-list">
+        <p style="font-size:13px; color:var(--ink-muted);">Sin avisos.</p>
+      </div>
+    </div>
 
+  </div>
+
+  <!-- TAB: HISTORIAL -->
+  <div class="section" id="sec-historial">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Historial de visitas</span>
+        <button class="btn btn-primary" onclick="abrirModalVisita()">+ Agregar</button>
+      </div>
+      <div class="historial-list" id="lista-historial">
+        <div class="empty-state">
+          <div style="font-size:2rem;">📋</div>
+          <p>No hay visitas registradas aún.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: AVISOS -->
+  <div class="section" id="sec-avisos">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Avisos importantes sobre Matthew</span>
+        <button class="btn btn-primary" onclick="abrirModalAviso()">+ Aviso</button>
+      </div>
+      <div class="avisos-list" id="lista-avisos">
+        <div class="empty-state">
+          <div style="font-size:2rem;">🔔</div>
+          <p>Sin avisos registrados.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: PRÓXIMA VISITA -->
+  <div class="section" id="sec-proxima">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Programar próxima visita</span>
+      </div>
+      <div class="form-row">
+        <label>Fecha de visita</label>
+        <input type="date" id="prox-fecha">
+      </div>
+      <div class="grid-2">
+        <div class="form-row">
+          <label>Hora</label>
+          <input type="time" id="prox-hora">
+        </div>
+        <div class="form-row">
+          <label>Lugar</label>
+          <input type="text" id="prox-lugar" placeholder="Ej: Casa materna">
+        </div>
+      </div>
+      <div class="form-row">
+        <label>Notas adicionales</label>
+        <textarea id="prox-notas" placeholder="Observaciones, condiciones, acuerdos..."></textarea>
+      </div>
+      <div style="display:flex; gap:8px; margin-top:0.5rem;">
+        <button class="btn btn-primary" onclick="guardarProxima()">Guardar visita programada</button>
+        <button class="btn btn-danger" onclick="borrarProxima()">Eliminar</button>
+      </div>
+      <div id="prox-confirmacion" style="margin-top:0.875rem; display:none;">
+        <span class="badge badge-success">✓ Guardado correctamente</span>
+      </div>
+    </div>
+
+    <div class="card" id="prox-preview" style="display:none;">
+      <div class="card-header">
+        <span class="card-title">Vista previa</span>
+      </div>
+      <div id="proxima-preview-content"></div>
+    </div>
+  </div>
+
+</main>
+
+<!-- MODAL: Registrar visita -->
+<div class="modal-overlay" id="modal-visita">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Registrar visita</span>
+      <button class="modal-close" onclick="cerrarModal('modal-visita')">✕</button>
+    </div>
+    <div class="grid-2">
+      <div class="form-row">
+        <label>Fecha</label>
+        <input type="date" id="v-fecha">
+      </div>
+      <div class="form-row">
+        <label>Hora</label>
+        <input type="time" id="v-hora">
+      </div>
+    </div>
+    <div class="form-row">
+      <label>Estado de la visita</label>
+      <select id="v-estado">
+        <option value="asistio">🟢 Asistió</option>
+        <option value="reprogramada">🟡 Reprogramada</option>
+        <option value="noasistio">🔴 No asistió</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label>Duración</label>
+      <input type="text" id="v-duracion" placeholder="Ej: 2 horas">
+    </div>
+    <div class="form-row">
+      <label>Notas</label>
+      <textarea id="v-notas" placeholder="Observaciones de la visita..."></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-visita')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarVisita()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Agregar aviso -->
+<div class="modal-overlay" id="modal-aviso">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Nuevo aviso</span>
+      <button class="modal-close" onclick="cerrarModal('modal-aviso')">✕</button>
+    </div>
+    <div class="form-row">
+      <label>Título del aviso</label>
+      <input type="text" id="a-titulo" placeholder="Ej: Cita médica pendiente">
+    </div>
+    <div class="form-row">
+      <label>Descripción</label>
+      <textarea id="a-desc" placeholder="Detalle del aviso..."></textarea>
+    </div>
+    <div class="form-row">
+      <label>Tipo</label>
+      <select id="a-tipo">
+        <option value="info">ℹ️ Informativo</option>
+        <option value="warn">⚠️ Atención</option>
+        <option value="danger">🚨 Urgente</option>
+        <option value="success">✅ Positivo</option>
+      </select>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-aviso')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarAviso()">Guardar aviso</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const DIAS = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  const MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  const MESES_CORTO = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+
+  function hoyStr() {
+    const h = new Date();
+    return `${DIAS[h.getDay()]}, ${h.getDate()} de ${MESES[h.getMonth()]} de ${h.getFullYear()}`;
+  }
+
+  function formatFecha(dateStr) {
+    if (!dateStr) return '';
+    const [y, m, d] = dateStr.split('-');
+    return `${parseInt(d)} de ${MESES[parseInt(m)-1]} de ${y}`;
+  }
+
+  function diasRestantes(dateStr) {
+    const hoy = new Date(); hoy.setHours(0,0,0,0);
+    const visita = new Date(dateStr + 'T00:00:00');
+    const diff = Math.round((visita - hoy) / (1000*60*60*24));
+    if (diff === 0) return 'Hoy';
+    if (diff === 1) return 'Mañana';
+    if (diff < 0) return `Hace ${Math.abs(diff)} días`;
+    return `En ${diff} días`;
+  }
+
+  document.getElementById('fecha-hoy').textContent = hoyStr();
+
+  function getData(key) {
+    try { return JSON.parse(localStorage.getItem(key)) || []; } catch { return []; }
+  }
+
+  function setData(key, val) {
+    localStorage.setItem(key, JSON.stringify(val));
+  }
+
+  function cambiarTab(id, btn) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+    document.getElementById('sec-' + id).classList.add('active');
+    btn.classList.add('active');
+    if (id === 'proxima') cargarFormProxima();
+    renderAll();
+  }
+
+  function abrirModalVisita() {
+    const hoy = new Date();
+    const ymd = hoy.toISOString().split('T')[0];
+    const hm = hoy.toTimeString().slice(0,5);
+    document.getElementById('v-fecha').value = ymd;
+    document.getElementById('v-hora').value = hm;
+    document.getElementById('v-estado').value = 'asistio';
+    document.getElementById('v-duracion').value = '';
+    document.getElementById('v-notas').value = '';
+    document.getElementById('modal-visita').classList.add('open');
+  }
+
+  function abrirModalAviso() {
+    document.getElementById('a-titulo').value = '';
+    document.getElementById('a-desc').value = '';
+    document.getElementById('a-tipo').value = 'info';
+    document.getElementById('modal-aviso').classList.add('open');
+  }
+
+  function cerrarModal(id) {
+    document.getElementById(id).classList.remove('open');
+  }
+
+  function guardarVisita() {
+    const fecha = document.getElementById('v-fecha').value;
+    const hora = document.getElementById('v-hora').value;
+    const estado = document.getElementById('v-estado').value;
+    const duracion = document.getElementById('v-duracion').value.trim();
+    const notas = document.getElementById('v-notas').value.trim();
+    if (!fecha) { alert('Por favor ingresa la fecha.'); return; }
+    const visitas = getData('visitas');
+    visitas.unshift({ id: Date.now(), fecha, hora, estado, duracion, notas, registradoEn: new Date().toISOString() });
+    setData('visitas', visitas);
+    cerrarModal('modal-visita');
+    renderAll();
+  }
+
+  function guardarAviso() {
+    const titulo = document.getElementById('a-titulo').value.trim();
+    const desc = document.getElementById('a-desc').value.trim();
+    const tipo = document.getElementById('a-tipo').value;
+    if (!titulo) { alert('Ingresa un título.'); return; }
+    const avisos = getData('avisos');
+    avisos.unshift({ id: Date.now(), titulo, desc, tipo });
+    setData('avisos', avisos);
+    cerrarModal('modal-aviso');
+    renderAll();
+  }
+
+  function eliminarVisita(id) {
+    if (!confirm('¿Eliminar esta visita?')) return;
+    const visitas = getData('visitas').filter(v => v.id !== id);
+    setData('visitas', visitas);
+    renderAll();
+  }
+
+  function eliminarAviso(id) {
+    const avisos = getData('avisos').filter(a => a.id !== id);
+    setData('avisos', avisos);
+    renderAll();
+  }
+
+  function guardarProxima() {
+    const fecha = document.getElementById('prox-fecha').value;
+    const hora = document.getElementById('prox-hora').value;
+    const lugar = document.getElementById('prox-lugar').value.trim();
+    const notas = document.getElementById('prox-notas').value.trim();
+    if (!fecha) { alert('Ingresa la fecha.'); return; }
+    setData('proxima', { fecha, hora, lugar, notas });
+    const conf = document.getElementById('prox-confirmacion');
+    conf.style.display = 'block';
+    setTimeout(() => conf.style.display = 'none', 2500);
+    renderAll();
+    cargarPreviewProxima();
+  }
+
+  function borrarProxima() {
+    if (!confirm('¿Eliminar la visita programada?')) return;
+    localStorage.removeItem('proxima');
+    document.getElementById('prox-fecha').value = '';
+    document.getElementById('prox-hora').value = '';
+    document.getElementById('prox-lugar').value = '';
+    document.getElementById('prox-notas').value = '';
+    document.getElementById('prox-preview').style.display = 'none';
+    renderAll();
+  }
+
+  function cargarFormProxima() {
+    const p = getData('proxima')[0] || JSON.parse(localStorage.getItem('proxima') || 'null');
+    if (!p) return;
+    document.getElementById('prox-fecha').value = p.fecha || '';
+    document.getElementById('prox-hora').value = p.hora || '';
+    document.getElementById('prox-lugar').value = p.lugar || '';
+    document.getElementById('prox-notas').value = p.notas || '';
+    cargarPreviewProxima();
+  }
+
+  function cargarPreviewProxima() {
+    const p = JSON.parse(localStorage.getItem('proxima') || 'null');
+    const preview = document.getElementById('prox-preview');
+    const content = document.getElementById('proxima-preview-content');
+    if (!p) { preview.style.display = 'none'; return; }
+    preview.style.display = 'block';
+    const [y, m, d] = p.fecha.split('-');
+    content.innerHTML = `
+      <div style="display:flex; align-items:center; gap:1rem; flex-wrap:wrap;">
+        <div class="fecha-big">${parseInt(d)}</div>
+        <div class="fecha-info">
+          <div class="fecha-mes">${MESES[parseInt(m)-1].charAt(0).toUpperCase()+MESES[parseInt(m)-1].slice(1)} ${y}${p.hora ? ' · '+p.hora : ''}</div>
+          ${p.lugar ? `<div class="fecha-sub">📍 ${p.lugar}</div>` : ''}
+        </div>
+      </div>
+      <div class="countdown-chip" style="margin-top:0.875rem;">📅 ${diasRestantes(p.fecha)}</div>
+      ${p.notas ? `<p style="font-size:13px; color:var(--ink-soft); margin-top:0.875rem;">${p.notas}</p>` : ''}
+    `;
+  }
+
+  function estadoLabel(e) {
+    if (e === 'asistio') return '<span class="badge badge-success">🟢 Asistió</span>';
+    if (e === 'reprogramada') return '<span class="badge badge-warn">🟡 Reprogramada</span>';
+    if (e === 'noasistio') return '<span class="badge badge-danger">🔴 No asistió</span>';
+    return '';
+  }
+
+  function estadoDot(e) {
+    if (e === 'asistio') return 'dot-success';
+    if (e === 'reprogramada') return 'dot-warn';
+    return 'dot-danger';
+  }
+
+  function renderAll() {
+    const visitas = getData('visitas');
+    const avisos = getData('avisos');
+    const proxima = JSON.parse(localStorage.getItem('proxima') || 'null');
+
+    // Stats
+    document.getElementById('stat-total').textContent = visitas.length;
+    document.getElementById('stat-asistio').textContent = visitas.filter(v => v.estado === 'asistio').length;
+    document.getElementById('stat-noasistio').textContent = visitas.filter(v => v.estado === 'noasistio').length;
+
+    // Próxima en inicio
+    const proxEl = document.getElementById('proxima-inicio');
+    if (proxima) {
+      const [y, m, d] = proxima.fecha.split('-');
+      proxEl.innerHTML = `
+        <div class="proxima-fecha">
+          <div class="fecha-big">${parseInt(d)}</div>
+          <div class="fecha-info">
+            <div class="fecha-mes">${MESES[parseInt(m)-1].charAt(0).toUpperCase()+MESES[parseInt(m)-1].slice(1)} ${y}${proxima.hora ? ' · '+proxima.hora : ''}</div>
+            ${proxima.lugar ? `<div class="fecha-sub">📍 ${proxima.lugar}</div>` : ''}
+          </div>
+        </div>
+        <div class="countdown-chip">📅 ${diasRestantes(proxima.fecha)}</div>
+        ${proxima.notas ? `<p style="font-size:12px; color:var(--ink-muted); margin-top:0.75rem;">${proxima.notas}</p>` : ''}
+      `;
+    } else {
+      proxEl.innerHTML = `<p style="font-size:13px; color:var(--ink-muted);">No hay visita programada. <a href="#" onclick="cambiarTab('proxima', document.querySelectorAll('.nav-tab')[3]); return false;" style="color:var(--info);">Programar →</a></p>`;
+    }
+
+    // Última visita
+    const ultimaEl = document.getElementById('ultima-visita');
+    if (visitas.length > 0) {
+      const v = visitas[0];
+      ultimaEl.innerHTML = `
+        <div style="display:flex; align-items:center; gap:0.75rem; flex-wrap:wrap;">
+          ${estadoLabel(v.estado)}
+          <span style="font-size:14px; font-weight:500;">${formatFecha(v.fecha)}${v.hora ? ' · '+v.hora : ''}</span>
+          ${v.duracion ? `<span style="font-size:12px; color:var(--ink-muted);">${v.duracion}</span>` : ''}
+        </div>
+        ${v.notas ? `<p style="font-size:12px; color:var(--ink-muted); margin-top:6px;">${v.notas}</p>` : ''}
+      `;
+    } else {
+      ultimaEl.innerHTML = `<p style="font-size:13px; color:var(--ink-muted);">Sin registros aún.</p>`;
+    }
+
+    // Historial
+    const listaEl = document.getElementById('lista-historial');
+    if (visitas.length === 0) {
+      listaEl.innerHTML = `<div class="empty-state"><div style="font-size:2rem;">📋</div><p>No hay visitas registradas aún.</p></div>`;
+    } else {
+      listaEl.innerHTML = visitas.map(v => `
+        <div class="visita-row">
+          <div class="visita-dot ${estadoDot(v.estado)}"></div>
+          <div class="visita-fecha">${formatFecha(v.fecha)}${v.hora ? '<br><span style="font-weight:400;color:var(--ink-muted);font-size:11px;">'+v.hora+'</span>' : ''}</div>
+          ${estadoLabel(v.estado)}
+          <div class="visita-nota">${v.notas || ''}</div>
+          ${v.duracion ? `<div class="visita-duracion">${v.duracion}</div>` : ''}
+          <button onclick="eliminarVisita(${v.id})" style="background:none;border:none;cursor:pointer;font-size:14px;color:var(--ink-muted);padding:4px;" title="Eliminar">✕</button>
+        </div>
+      `).join('');
+    }
+
+    // Avisos (tab)
+    const avisosEl = document.getElementById('lista-avisos');
+    if (avisos.length === 0) {
+      avisosEl.innerHTML = `<div class="empty-state"><div style="font-size:2rem;">🔔</div><p>Sin avisos registrados.</p></div>`;
+    } else {
+      avisosEl.innerHTML = avisos.map(a => {
+        const icons = { info: 'ℹ️', warn: '⚠️', danger: '🚨', success: '✅' };
+        return `
+          <div class="aviso tipo-${a.tipo}">
+            <div class="aviso-icon">${icons[a.tipo]}</div>
+            <div class="aviso-body">
+              <div class="aviso-titulo">${a.titulo}</div>
+              ${a.desc ? `<div class="aviso-desc">${a.desc}</div>` : ''}
+            </div>
+            <button class="aviso-btn-del" onclick="eliminarAviso(${a.id})" title="Eliminar">✕</button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Avisos en inicio (resumido)
+    const avisosInicioEl = document.getElementById('avisos-inicio-list');
+    document.getElementById('badge-avisos').textContent = avisos.length;
+    if (avisos.length === 0) {
+      avisosInicioEl.innerHTML = `<p style="font-size:13px; color:var(--ink-muted);">Sin avisos activos.</p>`;
+    } else {
+      const top = avisos.slice(0, 3);
+      const icons = { info: 'ℹ️', warn: '⚠️', danger: '🚨', success: '✅' };
+      avisosInicioEl.innerHTML = top.map(a => `
+        <div class="aviso tipo-${a.tipo}" style="margin-bottom:6px;">
+          <div class="aviso-icon">${icons[a.tipo]}</div>
+          <div class="aviso-body">
+            <div class="aviso-titulo">${a.titulo}</div>
+            ${a.desc ? `<div class="aviso-desc">${a.desc}</div>` : ''}
+          </div>
+        </div>
+      `).join('') + (avisos.length > 3 ? `<p style="font-size:12px;color:var(--ink-muted);margin-top:4px;">+${avisos.length-3} más en la sección Avisos</p>` : '');
+    }
+  }
+
+  // Cerrar modal clickeando afuera
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', e => {
+      if (e.target === overlay) overlay.classList.remove('open');
+    });
+  });
+
+  renderAll();
+</script>
 </body>
 </html>
