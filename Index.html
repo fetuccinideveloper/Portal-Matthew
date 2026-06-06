@@ -152,11 +152,11 @@ main { max-width:900px; margin:0 auto; padding:1.75rem 1.5rem; display:flex; fle
    Edita los campos debajo. Deja vacío ("") si no aplica.        */
 const PROXIMA = {
   fecha:      "2026-06-13",           // año-mes-día (debe ser sábado)
-  h_inicio:   "10:00",               // hora inicio  (HH:MM)
-  h_fin:      "13:00",               // hora fin     (HH:MM)
+  h_inicio:   "00:00",               // hora inicio  (HH:MM)
+  h_fin:      "00:00",               // hora fin     (HH:MM)
   lugar:      "Domicilio materno",
-  condicion:  "Visita supervisada por tratarse de un bebé.",
-  notas:      ""
+  condicion:  "Aún no confirmado.",
+  notas:      "Visita supervisada por tratarse de un bebé"
 };
 
 /* ─── HISTORIAL DE VISITAS ──────────────────────────────────────
@@ -166,19 +166,19 @@ const PROXIMA = {
 const VISITAS = [
   {
     fecha:       "2026-06-06",
-    horario:     "10:00 – 1:00 p.m.",
-    estado:      "asistio",
-    entrada:     "10:10",
-    salida:      "12:55",
-    observacion: "Visita realizada en domicilio materno."
+    horario:     "00.",
+    estado:      "noasistio",
+    entrada:     "00:00",
+    salida:      "00:00",
+    observacion: "No se presentó"
   },
   {
     fecha:       "2026-05-30",
-    horario:     "10:00 – 1:00 p.m.",
-    estado:      "noasistio",
-    entrada:     "",
-    salida:      "",
-    observacion: "No se presentó."
+    horario:     "12:00 pm.",
+    estado:      "asistio",
+    entrada:     "12:00",
+    salida:      "12:40",
+    observacion: "Visita realizada en domicilio materno."
   },
   // ── Agrega más visitas aquí con el mismo formato ──
   // {
@@ -260,7 +260,7 @@ const AVISOS = [
     <div class="card">
       <div class="card-head">
         <span class="card-title">Historial completo de visitas</span>
-        <span class="edit-hint">✏️ Edita en el código · sección VISITAS</span>
+        <span class="edit-hint">sección VISITAS</span>
       </div>
       <div style="overflow-x:auto;">
         <table class="visit-table">
@@ -297,7 +297,7 @@ const AVISOS = [
     <div class="card">
       <div class="card-head">
         <span class="card-title">Normas y condiciones de visita</span>
-        <span class="edit-hint">✏️ Edita en el código · sección NORMAS</span>
+        <span class="edit-hint"> sección NORMAS</span>
       </div>
       <div class="card-body" id="lista-normas"></div>
     </div>
@@ -308,7 +308,7 @@ const AVISOS = [
     <div class="card">
       <div class="card-head">
         <span class="card-title">Avisos importantes</span>
-        <span class="edit-hint">✏️ Edita en el código · sección AVISOS</span>
+        <span class="edit-hint">sección AVISOS</span>
       </div>
       <div class="card-body" id="lista-avisos"></div>
     </div>
