@@ -156,7 +156,8 @@ const PROXIMA = {
   h_fin:      "00:00",               // hora fin     (HH:MM)
   lugar:      "Domicilio materno",
   condicion:  "Aún no confirmado.",
-  notas:      "Visita supervisada por tratarse de un bebé"
+  notas:      "Para confirmar la programación de la visita, se tiene que registrar Google Forms - https://forms.gle/ub7t9vT59KDT2AeHA 
+              Visita supervisada por tratarse de un bebé"
 };
 
 /* ─── HISTORIAL DE VISITAS ──────────────────────────────────────
@@ -166,7 +167,7 @@ const PROXIMA = {
 const VISITAS = [
   {
     fecha:       "2026-06-06",
-    horario:     "00.",
+    horario:     "00:00",
     estado:      "noasistio",
     entrada:     "00:00",
     salida:      "00:00",
@@ -260,7 +261,7 @@ const AVISOS = [
     <div class="card">
       <div class="card-head">
         <span class="card-title">Historial completo de visitas</span>
-        <span class="edit-hint">sección VISITAS</span>
+        <span class="edit-hint"> </span>
       </div>
       <div style="overflow-x:auto;">
         <table class="visit-table">
@@ -286,7 +287,7 @@ const AVISOS = [
     <div class="card">
       <div class="card-head">
         <span class="card-title">Próxima visita programada</span>
-        <span class="edit-hint">✏️ Edita en el código · sección PROXIMA</span>
+        <span class="edit-hint"></span>
       </div>
       <div class="card-body" id="proxima-detail"></div>
     </div>
@@ -297,7 +298,7 @@ const AVISOS = [
     <div class="card">
       <div class="card-head">
         <span class="card-title">Normas y condiciones de visita</span>
-        <span class="edit-hint"> sección NORMAS</span>
+        <span class="edit-hint"> </span>
       </div>
       <div class="card-body" id="lista-normas"></div>
     </div>
